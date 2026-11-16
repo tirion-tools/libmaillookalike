@@ -1,5 +1,6 @@
 #include "maillookalike/url.h"
 
+#include <unicode/locid.h>
 #include <unicode/normalizer2.h>
 #include <unicode/uidna.h>
 #include <unicode/unistr.h>

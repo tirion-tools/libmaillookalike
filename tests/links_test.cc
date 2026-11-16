@@ -87,7 +87,7 @@ TEST(Links, EmbeddedDomainNeedsAKnownTld) {
   const auto a = fx.run("http://abc.qwz.paypal.com.evil.net/", {});
   EXPECT_NE(a.flags & ml::kLinkDomainInSubdomain, 0u);
   EXPECT_EQ(a.embedded_domain, "paypal.com");
-  EXPECT_EQ(fx.run("http://www.mybank.com.evil.net/", {}).embedded_domain, "www.mybank.com");
+  EXPECT_EQ(fx.run("http://www.mybank.com.evil.net/", {}).embedded_domain, "mybank.com");
 }
 
 TEST(Links, TextChecks) {

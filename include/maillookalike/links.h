@@ -37,6 +37,12 @@ struct LinkListsData {
   std::vector<HostPathRule> device;         // device-login endpoints
 };
 
+// Reads the list format of tools/lists_tsv.py: one row per line, tab-separated,
+// `rule <section> <kind> <host_re> <path_re> <params,comma,separated> <decode>` for the sections redirectors,
+// oauth_endpoints and device_login, `item <section> <value>` for generic_redirect_params, esp_trackers, shorteners and
+// user_content_hosts. Unknown rows are skipped.
+LinkListsData parse_link_lists(std::string_view tsv);
+
 class LinkLists {
  public:
   // nullptr and *error when a regex does not compile.

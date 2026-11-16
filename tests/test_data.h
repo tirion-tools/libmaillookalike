@@ -72,24 +72,9 @@ inline std::shared_ptr<const maillookalike::Psl> psl(std::vector<std::string> fi
 }
 
 inline std::shared_ptr<const maillookalike::LinkLists> lists() {
-  maillookalike::LinkListsData d;
-  for (const std::string& l : lines(MAILLOOKALIKE_TEST_DATA "/lists.tsv")) {
-    const std::vector<std::string> f = split(l, '\t');
-    if (f[0] == "rule") {
-      maillookalike::HostPathRule r{f[2], f[3], f[4], f[5].empty() ? std::vector<std::string>() : split(f[5], ','), f[6]};
-      (f[1] == "redirectors" ? d.redirectors : f[1] == "oauth_endpoints" ? d.oauth : d.device).push_back(std::move(r));
-    } else if (f[1] == "generic_redirect_params") {
-      d.generic_params.push_back(f[2]);
-    } else if (f[1] == "esp_trackers") {
-      d.esp_trackers.push_back(f[2]);
-    } else if (f[1] == "shorteners") {
-      d.shorteners.push_back(f[2]);
-    } else {
-      d.user_content_hosts.push_back(f[2]);
-    }
-  }
   std::string err;
-  return maillookalike::LinkLists::compile(d, &err);
+  return maillookalike::LinkLists::compile(maillookalike::parse_link_lists(read(MAILLOOKALIKE_TEST_DATA "/lists.tsv")),
+                                           &err);
 }
 
 }  // namespace testdata

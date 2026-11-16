@@ -129,6 +129,36 @@ struct LinkLists::Impl {
 
 LinkLists::~LinkLists() = default;
 
+LinkListsData parse_link_lists(std::string_view tsv) {
+  LinkListsData d;
+  auto split = [](std::string_view s, char sep) {
+    std::vector<std::string> r;
+    size_t p = 0;
+    while (true) {
+      const size_t q = s.find(sep, p);
+      r.emplace_back(s.substr(p, q == std::string_view::npos ? std::string_view::npos : q - p));
+      if (q == std::string_view::npos) break;
+      p = q + 1;
+    }
+    return r;
+  };
+  for (const std::string& line : split(tsv, '\n')) {
+    const std::vector<std::string> f = split(line, '\t');
+    if (f[0] == "rule" && f.size() == 7) {
+      HostPathRule r{f[2], f[3], f[4], f[5].empty() ? std::vector<std::string>() : split(f[5], ','), f[6]};
+      if (f[1] == "redirectors") d.redirectors.push_back(std::move(r));
+      else if (f[1] == "oauth_endpoints") d.oauth.push_back(std::move(r));
+      else if (f[1] == "device_login") d.device.push_back(std::move(r));
+    } else if (f[0] == "item" && f.size() == 3) {
+      if (f[1] == "generic_redirect_params") d.generic_params.push_back(f[2]);
+      else if (f[1] == "esp_trackers") d.esp_trackers.push_back(f[2]);
+      else if (f[1] == "shorteners") d.shorteners.push_back(f[2]);
+      else if (f[1] == "user_content_hosts") d.user_content_hosts.push_back(f[2]);
+    }
+  }
+  return d;
+}
+
 std::shared_ptr<const LinkLists> LinkLists::compile(const LinkListsData& d, std::string* error) {
   std::shared_ptr<LinkLists> l(new LinkLists());
   l->impl_ = std::make_unique<Impl>();

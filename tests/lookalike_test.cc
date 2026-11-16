@@ -1,8 +1,11 @@
 // Lookalike verdicts: the generated attacks and controls of the engine's validation run (tests/vectors/
 // lookalike_attacks.tsv; brand list tests/data/brands.tsv, shared mailboxes tests/data/shared_mailbox.txt, the
-// owner "Alex Morgan" of Kestrel Works). Contact cases need the run's synthetic address book and are left to
-// tools/eval.
+// owner "Alex Morgan" of Kestrel Works). The run also held 10,000 synthetic contacts on Tranco domains, which are not
+// shipped here: contact cases are left out, and expected host-check matches on domains that are neither brand-owned nor
+// the owner's (contact domains such as google.net) are dropped before comparing.
 #include <gtest/gtest.h>
+
+#include <set>
 
 #include "maillookalike/lookalike.h"
 #include "test_data.h"
@@ -37,6 +40,8 @@ std::unique_ptr<ml::Engine> engine() {
   p.own_names = {"Alex Morgan"};
   p.own_addresses = {"alex.morgan@kestrelworks.com", "alex.morgan.home@gmail.com"};
   p.org_names = {"Kestrel Works"};
+  // The run's popular list was Tranco 947W2 ranks 1..100,000; popular_subset.txt holds the entries these cases name.
+  p.popular_domains = testdata::lines(MAILLOOKALIKE_TEST_DATA "/popular_subset.txt");
   e->set_profile(p);
   return e;
 }
@@ -46,10 +51,18 @@ std::unique_ptr<ml::Engine> engine() {
 TEST(Lookalike, AttackAndControlVerdicts) {
   auto eng = engine();
   ASSERT_TRUE(eng);
+  std::set<std::string> protected_domains = {"kestrelworks.com", "gmail.com"};
+  for (const ml::Brand& b : brands()) protected_domains.insert(b.domains.begin(), b.domains.end());
   size_t n = 0;
   for (const auto& f : testdata::rows(MAILLOOKALIKE_TEST_VECTORS "/lookalike_attacks.tsv")) {
     ASSERT_GE(f.size(), 3u);
-    const std::string expected = f.size() > 3 ? f[3] : "";
+    std::string expected;
+    for (const std::string& e : testdata::split(f.size() > 3 ? f[3] : "", ',')) {
+      if (e.empty()) continue;
+      const std::string target = e.substr(e.rfind(':') + 1);
+      if (f[2].empty() && protected_domains.count(target) == 0) continue;
+      expected += (expected.empty() ? "" : ",") + e;
+    }
     std::string got;
     auto add = [&](const char* kind, ml::Severity s, const std::string& target) {
       got += std::string(got.empty() ? "" : ",") + kind + ":" + ml::to_string(s) + ":" + target;

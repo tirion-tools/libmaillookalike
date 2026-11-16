@@ -31,8 +31,9 @@ TEST(Url, SharedVectors) {
     }
     // Scheme-specific parts only (mailto and opaque schemes have no query of their own).
     if (u->scheme == "http" || u->scheme == "https" || u->scheme == "ftp" || u->scheme == "ws" || u->scheme == "wss" ||
-        u->scheme == "file")
+        u->scheme == "file") {
       EXPECT_EQ(params, testdata::unescape_list(f[9])) << raw;
+    }
   }
   EXPECT_GT(n, 90u);
 }

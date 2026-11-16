@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Turns a mail client's link-list JSON (redirectors, generic_redirect_params, esp_trackers, shorteners,
-user_content_hosts, oauth_endpoints, device_login) into tests/data/lists.tsv, the fixture the tests load.
+user_content_hosts, oauth_endpoints, device_login) into the link-list TSV that maillookalike::parse_link_lists() reads (tests/data/lists.tsv is one).
 
 Rows: `rule<TAB>section<TAB>kind<TAB>host_re<TAB>path_re<TAB>params,comma,separated<TAB>decode` or
 `item<TAB>section<TAB>value`."""
