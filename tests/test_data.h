@@ -1,6 +1,7 @@
 // Fixture loading for the tests: the pinned PSL copy, the link lists (tests/data/lists.tsv) and line splitting.
 #pragma once
 
+#include <cstdlib>
 #include <fstream>
 #include <memory>
 #include <sstream>
@@ -11,6 +12,13 @@
 #include "maillookalike/psl.h"
 
 namespace testdata {
+
+// The shared vectors; MAILLOOKALIKE_VECTORS_DIR points the vector tests at another set (for example vectors
+// produced from a local corpus that cannot be committed).
+inline std::string vectors(const char* name) {
+  const char* d = std::getenv("MAILLOOKALIKE_VECTORS_DIR");
+  return std::string(d && *d ? d : MAILLOOKALIKE_TEST_VECTORS) + "/" + name;
+}
 
 inline std::string read(const std::string& path) {
   std::ifstream f(path, std::ios::binary);

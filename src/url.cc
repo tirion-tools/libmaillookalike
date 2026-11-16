@@ -115,7 +115,10 @@ std::optional<HostForms> host_forms(std::string_view raw) {
   UErrorCode st = U_ZERO_ERROR;
   UIDNAInfo info = UIDNA_INFO_INITIALIZER;
   int32_t n = uidna_nameToASCII_UTF8(idna(), h.data(), static_cast<int32_t>(h.size()), buf, sizeof buf, &info, &st);
-  if (U_FAILURE(st) || info.errors != 0 || n <= 0 || n >= static_cast<int32_t>(sizeof buf)) return std::nullopt;
+  // "--" in the third and fourth positions is accepted, as by the reference (.NET IdnMapping, which ignores
+  // UIDNA_ERROR_HYPHEN_3_4); leading and trailing hyphens are not.
+  if (U_FAILURE(st) || (info.errors & ~uint32_t{UIDNA_ERROR_HYPHEN_3_4}) != 0 || n <= 0 || n >= static_cast<int32_t>(sizeof buf))
+    return std::nullopt;
   HostForms r;
   r.ascii = ascii_lower(std::string_view(buf, static_cast<size_t>(n)));
   st = U_ZERO_ERROR;

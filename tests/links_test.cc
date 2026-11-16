@@ -36,7 +36,7 @@ TEST(Links, SharedVectors) {
   Fixture fx;
   ASSERT_TRUE(fx.psl && fx.lists);
   size_t n = 0;
-  for (const auto& f : testdata::rows(MAILLOOKALIKE_TEST_VECTORS "/links.tsv")) {
+  for (const auto& f : testdata::rows(testdata::vectors("links.tsv"))) {
     ASSERT_EQ(f.size(), 14u);
     const std::string href = testdata::unescape(f[0]);
     ml::LinkFacts facts;

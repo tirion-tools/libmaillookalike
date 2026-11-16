@@ -8,13 +8,13 @@ namespace ml = maillookalike;
 
 TEST(Url, SharedVectors) {
   size_t n = 0;
-  for (const auto& f : testdata::rows(MAILLOOKALIKE_TEST_VECTORS "/urls.tsv")) {
+  for (const auto& f : testdata::rows(testdata::vectors("urls.tsv"))) {
     ASSERT_EQ(f.size(), 10u);
     const std::string raw = testdata::unescape(f[0]);
     const auto u = ml::Url::parse(raw);
     ++n;
-    ASSERT_EQ(u.has_value(), f[1] == "1") << raw;
-    if (!u) continue;
+    EXPECT_EQ(u.has_value(), f[1] == "1") << raw;
+    if (!u || f[1] != "1") continue;
     EXPECT_EQ(u->scheme, testdata::unescape(f[2])) << raw;
     EXPECT_EQ(u->host, testdata::unescape(f[3])) << raw;
     EXPECT_EQ(u->path, testdata::unescape(f[4])) << raw;

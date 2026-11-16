@@ -1,0 +1,824 @@
+# raw	ok	scheme	host	path	query	canonical	mailto_domain	flags	params (key\|value\|...)
+http://paypal.com	1	http	paypal.com	/		http://paypal.com/		0	
+HTTPS://WWW.PayPal.COM/signin?x=1#frag	1	https	www.paypal.com	/signin	x=1	https://www.paypal.com/signin?x=1		0	x\|1
+www.example.com/path	1	http	www.example.com	/path		http://www.example.com/path		0	
+www.	1	http	www	/		http://www/		0	
+http://user:pass@evil.com/	1	http	evil.com	/		http://evil.com/		1	
+http://paypal.com@evil.net/login	1	http	evil.net	/login		http://evil.net/login		1	
+http://evil.net\\@paypal.com/	1	http	evil.net	/@paypal.com/		http://evil.net/@paypal.com/		0	
+http:\\\\evil.net\\x	1	http	evil.net	/x		http://evil.net/x		32	
+http:/evil.net/x	1	http	evil.net	/x		http://evil.net/x		32	
+http:///evil.net/x	1	http	evil.net	/x		http://evil.net/x		32	
+https:evil.net	1	https	evil.net	/		https://evil.net/		32	
+http://0xC0A80001/	1	http	192.168.0.1	/		http://192.168.0.1/		2	
+http://3232235521/	1	http	192.168.0.1	/		http://192.168.0.1/		2	
+http://0300.0250.0.1/	1	http	192.168.0.1	/		http://192.168.0.1/		2	
+http://192.168.1/	1	http	192.168.0.1	/		http://192.168.0.1/		2	
+http://192.168.0x1.01/	1	http	192.168.1.1	/		http://192.168.1.1/		2	
+http://256.1.1.1/	1	http	256.1.1.1	/		http://256.1.1.1/		0	
+http://1.2.3.4.5/	1	http	1.2.3.4.5	/		http://1.2.3.4.5/		0	
+http://[::1]:8080/a	1	http	[::1]	/a		http://[::1]:8080/a		18	
+http://[2001:db8::1]/	1	http	[2001:db8::1]	/		http://[2001:db8::1]/		2	
+http://ex%61mple.com/	1	http	example.com	/		http://example.com/		4	
+http://%65vil.com/	1	http	evil.com	/		http://evil.com/		4	
+http://pаypal.com/	1	http	xn--pypal-4ve.com	/		http://xn--pypal-4ve.com/		8	
+http://xn--pypal-4ve.com/	1	http	xn--pypal-4ve.com	/		http://xn--pypal-4ve.com/		8	
+http://раураl.com/	1	http	xn--l-7sba6dbr.com	/		http://xn--l-7sba6dbr.com/		8	
+http://bücher.de/	1	http	xn--bcher-kva.de	/		http://xn--bcher-kva.de/		8	
+http://example。com/	1	http	example.com	/		http://example.com/		0	
+http://example．com/	1	http	example.com	/		http://example.com/		0	
+http://example｡com/	1	http	example.com	/		http://example.com/		0	
+http://example.com:80/	1	http	example.com	/		http://example.com/		0	
+https://example.com:443/	1	https	example.com	/		https://example.com/		0	
+https://example.com:80/	1	https	example.com	/		https://example.com:80/		16	
+http://example.com:8443/	1	http	example.com	/		http://example.com:8443/		16	
+http://example.com:/	1	http	example.com	/		http://example.com/		0	
+http://example.com./a	1	http	example.com	/a		http://example.com/a		0	
+http://EXAMPLE.com../	1	http	example.com	/		http://example.com/		0	
+http://a..b.com/	0							0	
+http://-leading.com/	0							0	
+http://trailing-.com/	0							0	
+http://ab--cd.com/	1	http	ab--cd.com	/		http://ab--cd.com/		0	
+http://under_score.example.com/	1	http	under_score.example.com	/		http://under_score.example.com/		0	
+http://xn--a.com/	0							0	
+http://xn--example-.com/	0							0	
+http://a.b.c.d.e.f.example.co.uk/	1	http	a.b.c.d.e.f.example.co.uk	/		http://a.b.c.d.e.f.example.co.uk/		0	
+http://www.paypal.com.secure-login.evil.tld/	1	http	www.paypal.com.secure-login.evil.tld	/		http://www.paypal.com.secure-login.evil.tld/		0	
+http://www.mybank.com.evil.net/	1	http	www.mybank.com.evil.net	/		http://www.mybank.com.evil.net/		0	
+http://abc.qwz.paypal.com.evil.net/	1	http	abc.qwz.paypal.com.evil.net	/		http://abc.qwz.paypal.com.evil.net/		0	
+https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=abc&scope=Mail.Read	1	https	login.microsoftonline.com	/common/oauth2/v2.0/authorize	client_id=abc&scope=Mail.Read	https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=abc&scope=Mail.Read		0	client_id\|abc\|scope\|Mail.Read
+https://login.microsoftonline.com/common/oauth2/deviceauth	1	https	login.microsoftonline.com	/common/oauth2/deviceauth		https://login.microsoftonline.com/common/oauth2/deviceauth		0	
+https://microsoft.com/devicelogin	1	https	microsoft.com	/devicelogin		https://microsoft.com/devicelogin		0	
+https://example.com/?user_code=ABCD	1	https	example.com	/	user_code=ABCD	https://example.com/?user_code=ABCD		0	user_code\|ABCD
+https://www.google.com/url?q=https://evil.example.net/x	1	https	www.google.com	/url	q=https://evil.example.net/x	https://www.google.com/url?q=https://evil.example.net/x		0	q\|https://evil.example.net/x
+https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.paypal.com%2F&data=x	1	https	eur01.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fwww.paypal.com%2F&data=x	https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.paypal.com%2F&data=x		0	url\|https://www.paypal.com/\|data\|x
+https://urldefense.proofpoint.com/v2/url?u=https-3A__evil.com_x&d=1	1	https	urldefense.proofpoint.com	/v2/url	u=https-3A__evil.com_x&d=1	https://urldefense.proofpoint.com/v2/url?u=https-3A__evil.com_x&d=1		0	u\|https-3A__evil.com_x\|d\|1
+https://urldefense.com/v3/__https://evil.com/x__;!!abc	1	https	urldefense.com	/v3/__https://evil.com/x__;!!abc		https://urldefense.com/v3/__https://evil.com/x__;!!abc		0	
+https://www.bing.com/ck/a?u=a1aHR0cHM6Ly9ldmlsLmNvbS94	1	https	www.bing.com	/ck/a	u=a1aHR0cHM6Ly9ldmlsLmNvbS94	https://www.bing.com/ck/a?u=a1aHR0cHM6Ly9ldmlsLmNvbS94		0	u\|a1aHR0cHM6Ly9ldmlsLmNvbS94
+https://track.example.com/c?redirect=https://evil.com/	1	https	track.example.com	/c	redirect=https://evil.com/	https://track.example.com/c?redirect=https://evil.com/		0	redirect\|https://evil.com/
+https://bit.ly/abc	1	https	bit.ly	/abc		https://bit.ly/abc		0	
+https://storage.googleapis.com/bucket/x.html	1	https	storage.googleapis.com	/bucket/x.html		https://storage.googleapis.com/bucket/x.html		0	
+https://sites.google.com/view/x	1	https	sites.google.com	/view/x		https://sites.google.com/view/x		0	
+mailto:someone@Example.COM?subject=x	1	mailto		/		mailto:someone@Example.COM	example.com	0	
+mailto:a@b.com,c@d.com	1	mailto		/		mailto:a@b.com	b.com	0	
+mailto:%61@bücher.de	1	mailto		/		mailto:a@bücher.de	xn--bcher-kva.de	0	
+tel:+123	1	tel		/		tel:+123		0	
+javascript:alert(1)	1	javascript		/		javascript:alert(1)		0	
+data:text/html;base64,PHNjcmlwdD4=	1	data		/		data:text/html;base64,PHNjcmlwdD4=		0	
+cid:part1@x	1	cid		/		cid:part1@x		0	
+file:///etc/passwd	1	file	etc	/passwd		file://etc/passwd		32	
+ftp://ftp.example.com/x	1	ftp	ftp.example.com	/x		ftp://ftp.example.com/x		0	
+ws://example.com/socket	1	ws	example.com	/socket		ws://example.com/socket		0	
+  http://padded.com/  	1	http	padded.com	/		http://padded.com/		0	
+http://ta\tb.com/	1	http	tab.com	/		http://tab.com/		0	
+http://new	1	http	new	/		http://new/		0	
+line.com/	0							0	
+http://example.com/a\\b\\c?x=\\y	1	http	example.com	/a/b/c	x=/y	http://example.com/a/b/c?x=/y		0	x\|/y
+http://example.com/?a=1&b=2;c=3&A+B=x%20y&%41=%zz&=e&k	1	http	example.com	/	a=1&b=2;c=3&A+B=x%20y&%41=%zz&=e&k	http://example.com/?a=1&b=2;c=3&A+B=x%20y&%41=%zz&=e&k		0	a\|1\|b\|2\|c\|3\|a b\|x y\|a\|%zz\|\|e\|k\|
+http://example.com/%E2%82%AC%FF	1	http	example.com	/%E2%82%AC%FF		http://example.com/%E2%82%AC%FF		0	
+http://example.com/?q=%E2%82%AC%FF%41	1	http	example.com	/	q=%E2%82%AC%FF%41	http://example.com/?q=%E2%82%AC%FF%41		0	q\|€%FFA
+https://ex.com/?u=https%3A%2F%2Fwww.example.org%2F	1	https	ex.com	/	u=https%3A%2F%2Fwww.example.org%2F	https://ex.com/?u=https%3A%2F%2Fwww.example.org%2F		0	u\|https://www.example.org/
+://nothing	0							0	
+http	0							0	
+1http://x.com	0							0	
+http://	0							0	
+http://@/	0							0	
+http://x.com:abc/	1	http	x.com	/		http://x.com:abc/		16	
+http://localhost/	1	http	localhost	/		http://localhost/		0	
+http://foo/	1	http	foo	/		http://foo/		0	
+http://foo.bar.unknowntld/	1	http	foo.bar.unknowntld	/		http://foo.bar.unknowntld/		0	
+https://sub.github.io/	1	https	sub.github.io	/		https://sub.github.io/		0	
+https://a.b.blogspot.com/	1	https	a.b.blogspot.com	/		https://a.b.blogspot.com/		0	
+http://xn--55qx5d.cn/	1	http	xn--55qx5d.cn	/		http://xn--55qx5d.cn/		8	
+http://例子.中国/	1	http	xn--fsqu00a.xn--fiqs8s	/		http://xn--fsqu00a.xn--fiqs8s/		8	
+http://ドメイン.テスト/	1	http	xn--eckwd4c7c.xn--zckzah	/		http://xn--eckwd4c7c.xn--zckzah/		8	
+http://ﬁ.com/	1	http	fi.com	/		http://fi.com/		8	
+http://ℂ.com/	1	http	c.com	/		http://c.com/		8	
+http://example.com\\@evil.net	1	http	example.com	/@evil.net		http://example.com/@evil.net		0	
+http://evil.com#@paypal.com	1	http	evil.com	/		http://evil.com/		0	
+http://evil.com?@paypal.com	1	http	evil.com	/	@paypal.com	http://evil.com/?@paypal.com		0	@paypal.com\|
+https://34c1jrg.xyz/r	1	https	34c1jrg.xyz	/r		https://34c1jrg.xyz/r		0	
+https://ip4l7jg.xyz/r	1	https	ip4l7jg.xyz	/r		https://ip4l7jg.xyz/r		0	
+https://t2wj0c5.site/r	1	https	t2wj0c5.site	/r		https://t2wj0c5.site/r		0	
+https://jbnq5sw.info/r	1	https	jbnq5sw.info	/r		https://jbnq5sw.info/r		0	
+https://4t7kch5.info/r	1	https	4t7kch5.info	/r		https://4t7kch5.info/r		0	
+https://01vvtx6.click/r	1	https	01vvtx6.click	/r		https://01vvtx6.click/r		0	
+https://g042gmo.live/r	1	https	g042gmo.live	/r		https://g042gmo.live/r		0	
+https://5dj9ik4.top/r	1	https	5dj9ik4.top	/r		https://5dj9ik4.top/r		0	
+https://aa2f577.xyz/r	1	https	aa2f577.xyz	/r		https://aa2f577.xyz/r		0	
+https://h8jdvos.info/r	1	https	h8jdvos.info	/r		https://h8jdvos.info/r		0	
+https://ylm5l8n.site/r	1	https	ylm5l8n.site	/r		https://ylm5l8n.site/r		0	
+https://1oyqdfc.top/r	1	https	1oyqdfc.top	/r		https://1oyqdfc.top/r		0	
+https://c7ubymw.live/r	1	https	c7ubymw.live	/r		https://c7ubymw.live/r		0	
+https://igc4rna.online/r	1	https	igc4rna.online	/r		https://igc4rna.online/r		0	
+https://u20kqap.online/r	1	https	u20kqap.online	/r		https://u20kqap.online/r		0	
+https://kjysych.info/r	1	https	kjysych.info	/r		https://kjysych.info/r		0	
+https://ymzufk2.top/r	1	https	ymzufk2.top	/r		https://ymzufk2.top/r		0	
+https://muo5hkz.info/r	1	https	muo5hkz.info	/r		https://muo5hkz.info/r		0	
+https://p5wc3ma.click/r	1	https	p5wc3ma.click	/r		https://p5wc3ma.click/r		0	
+https://bux8q8d.top/r	1	https	bux8q8d.top	/r		https://bux8q8d.top/r		0	
+https://8yzr398.info/r	1	https	8yzr398.info	/r		https://8yzr398.info/r		0	
+https://lwuwzy2.xyz/r	1	https	lwuwzy2.xyz	/r		https://lwuwzy2.xyz/r		0	
+https://p92m67d.click/r	1	https	p92m67d.click	/r		https://p92m67d.click/r		0	
+https://nvcn9z8.online/r	1	https	nvcn9z8.online	/r		https://nvcn9z8.online/r		0	
+https://vm7sv1a.info/r	1	https	vm7sv1a.info	/r		https://vm7sv1a.info/r		0	
+https://co5eai6.click/r	1	https	co5eai6.click	/r		https://co5eai6.click/r		0	
+https://7vjdw22.site/r	1	https	7vjdw22.site	/r		https://7vjdw22.site/r		0	
+https://pghhpbf.site/r	1	https	pghhpbf.site	/r		https://pghhpbf.site/r		0	
+https://fhoepge.online/r	1	https	fhoepge.online	/r		https://fhoepge.online/r		0	
+https://0ndtfs2.xyz/r	1	https	0ndtfs2.xyz	/r		https://0ndtfs2.xyz/r		0	
+https://na3.docusign.net/Signing/EmailStart.aspx?a=1	1	https	na3.docusign.net	/Signing/EmailStart.aspx	a=1	https://na3.docusign.net/Signing/EmailStart.aspx?a=1		0	a\|1
+https://account.live.com/activity	1	https	account.live.com	/activity		https://account.live.com/activity		0	
+https://cesaon9.site/x	1	https	cesaon9.site	/x		https://cesaon9.site/x		0	
+https://xxjjwk5.top/keep	1	https	xxjjwk5.top	/keep		https://xxjjwk5.top/keep		0	
+https://g2r5ojs.xyz/upgrade	1	https	g2r5ojs.xyz	/upgrade		https://g2r5ojs.xyz/upgrade		0	
+https://blwnbif.info/x	1	https	blwnbif.info	/x		https://blwnbif.info/x		0	
+https://kzm38j0.online/keep	1	https	kzm38j0.online	/keep		https://kzm38j0.online/keep		0	
+https://bbzrysg.top/upgrade	1	https	bbzrysg.top	/upgrade		https://bbzrysg.top/upgrade		0	
+https://a1h5ud1.live/x	1	https	a1h5ud1.live	/x		https://a1h5ud1.live/x		0	
+https://g0aw7qs.click/keep	1	https	g0aw7qs.click	/keep		https://g0aw7qs.click/keep		0	
+https://moct2xs.live/upgrade	1	https	moct2xs.live	/upgrade		https://moct2xs.live/upgrade		0	
+https://99eahfj.live/x	1	https	99eahfj.live	/x		https://99eahfj.live/x		0	
+https://3v15swl.live/keep	1	https	3v15swl.live	/keep		https://3v15swl.live/keep		0	
+https://ep2o6rs.site/upgrade	1	https	ep2o6rs.site	/upgrade		https://ep2o6rs.site/upgrade		0	
+https://d9y5qn4.info/x	1	https	d9y5qn4.info	/x		https://d9y5qn4.info/x		0	
+https://g6vkb0x.site/keep	1	https	g6vkb0x.site	/keep		https://g6vkb0x.site/keep		0	
+https://dhlsakc.live/upgrade	1	https	dhlsakc.live	/upgrade		https://dhlsakc.live/upgrade		0	
+https://hau04yj.online/x	1	https	hau04yj.online	/x		https://hau04yj.online/x		0	
+https://bl19yd7.shop/keep	1	https	bl19yd7.shop	/keep		https://bl19yd7.shop/keep		0	
+https://2yorg3j.site/upgrade	1	https	2yorg3j.site	/upgrade		https://2yorg3j.site/upgrade		0	
+https://b9ifqu8.click/x	1	https	b9ifqu8.click	/x		https://b9ifqu8.click/x		0	
+https://uezsd5d.info/keep	1	https	uezsd5d.info	/keep		https://uezsd5d.info/keep		0	
+https://xdrfi00.top/upgrade	1	https	xdrfi00.top	/upgrade		https://xdrfi00.top/upgrade		0	
+https://ls8y7mt.shop/x	1	https	ls8y7mt.shop	/x		https://ls8y7mt.shop/x		0	
+https://rqatyee.live/keep	1	https	rqatyee.live	/keep		https://rqatyee.live/keep		0	
+https://xfcg6lo.live/upgrade	1	https	xfcg6lo.live	/upgrade		https://xfcg6lo.live/upgrade		0	
+https://www.paypal.com/activity	1	https	www.paypal.com	/activity		https://www.paypal.com/activity		0	
+https://docs.google.com/document/d/1x/edit	1	https	docs.google.com	/document/d/1x/edit		https://docs.google.com/document/d/1x/edit		0	
+https://paypa1.com/review	1	https	paypa1.com	/review		https://paypa1.com/review		0	
+https://rnicrosoft.com/review	1	https	rnicrosoft.com	/review		https://rnicrosoft.com/review		0	
+https://docusign-secure.com/review	1	https	docusign-secure.com	/review		https://docusign-secure.com/review		0	
+https://northwind-payroll.example/review	1	https	northwind-payroll.example	/review		https://northwind-payroll.example/review		0	
+https://fabrikarn.example/review	1	https	fabrikarn.example	/review		https://fabrikarn.example/review		0	
+https://arnazon.com/review	1	https	arnazon.com	/review		https://arnazon.com/review		0	
+https://contoso.co/review	1	https	contoso.co	/review		https://contoso.co/review		0	
+https://adobe-esign.net/review	1	https	adobe-esign.net	/review		https://adobe-esign.net/review		0	
+https://yfavg2o.online/login	1	https	yfavg2o.online	/login		https://yfavg2o.online/login		0	
+http://4yp3gfu.online/o365	1	http	4yp3gfu.online	/o365		http://4yp3gfu.online/o365		0	
+https://wp7aqoy.top/hr	1	https	wp7aqoy.top	/hr		https://wp7aqoy.top/hr		0	
+https://d757kgs.xyz/login	1	https	d757kgs.xyz	/login		https://d757kgs.xyz/login		0	
+http://re15dwo.live/o365	1	http	re15dwo.live	/o365		http://re15dwo.live/o365		0	
+https://1kqb8zi.click/hr	1	https	1kqb8zi.click	/hr		https://1kqb8zi.click/hr		0	
+https://dv1vvuz.click/login	1	https	dv1vvuz.click	/login		https://dv1vvuz.click/login		0	
+http://nsb7a8c.online/o365	1	http	nsb7a8c.online	/o365		http://nsb7a8c.online/o365		0	
+https://2xicovy.top/hr	1	https	2xicovy.top	/hr		https://2xicovy.top/hr		0	
+https://i6g4yxa.live/login	1	https	i6g4yxa.live	/login		https://i6g4yxa.live/login		0	
+http://35rhahd.online/o365	1	http	35rhahd.online	/o365		http://35rhahd.online/o365		0	
+https://jk28myw.xyz/hr	1	https	jk28myw.xyz	/hr		https://jk28myw.xyz/hr		0	
+https://hvco052.click/login	1	https	hvco052.click	/login		https://hvco052.click/login		0	
+http://pqbhgub.click/o365	1	http	pqbhgub.click	/o365		http://pqbhgub.click/o365		0	
+https://6uutbc9.top/hr	1	https	6uutbc9.top	/hr		https://6uutbc9.top/hr		0	
+https://sphhqs8.top/login	1	https	sphhqs8.top	/login		https://sphhqs8.top/login		0	
+http://c0ooizu.live/o365	1	http	c0ooizu.live	/o365		http://c0ooizu.live/o365		0	
+https://nck65bv.top/hr	1	https	nck65bv.top	/hr		https://nck65bv.top/hr		0	
+https://hwnttqs.site/login	1	https	hwnttqs.site	/login		https://hwnttqs.site/login		0	
+http://vflfifn.info/o365	1	http	vflfifn.info	/o365		http://vflfifn.info/o365		0	
+https://v416v2i.info/hr	1	https	v416v2i.info	/hr		https://v416v2i.info/hr		0	
+https://m7xd6jp.top/login	1	https	m7xd6jp.top	/login		https://m7xd6jp.top/login		0	
+http://tq85t67.click/o365	1	http	tq85t67.click	/o365		http://tq85t67.click/o365		0	
+https://263oc7b.shop/hr	1	https	263oc7b.shop	/hr		https://263oc7b.shop/hr		0	
+https://j2t9wl9.top/login	1	https	j2t9wl9.top	/login		https://j2t9wl9.top/login		0	
+http://96gdgu3.live/o365	1	http	96gdgu3.live	/o365		http://96gdgu3.live/o365		0	
+https://eepjish.xyz/hr	1	https	eepjish.xyz	/hr		https://eepjish.xyz/hr		0	
+https://qtpmf3i.info/login	1	https	qtpmf3i.info	/login		https://qtpmf3i.info/login		0	
+http://bg2r2gu.xyz/o365	1	http	bg2r2gu.xyz	/o365		http://bg2r2gu.xyz/o365		0	
+https://dgcj56q.click/hr	1	https	dgcj56q.click	/hr		https://dgcj56q.click/hr		0	
+https://qxoskv3.click/login	1	https	qxoskv3.click	/login		https://qxoskv3.click/login		0	
+http://19mwf22.shop/o365	1	http	19mwf22.shop	/o365		http://19mwf22.shop/o365		0	
+https://oiieetv.live/hr	1	https	oiieetv.live	/hr		https://oiieetv.live/hr		0	
+https://xl9dcrn.shop/login	1	https	xl9dcrn.shop	/login		https://xl9dcrn.shop/login		0	
+http://m06pjzy.live/o365	1	http	m06pjzy.live	/o365		http://m06pjzy.live/o365		0	
+https://pb9w1dx.site/hr	1	https	pb9w1dx.site	/hr		https://pb9w1dx.site/hr		0	
+https://nb29990.info/login	1	https	nb29990.info	/login		https://nb29990.info/login		0	
+http://lp70ejv.site/o365	1	http	lp70ejv.site	/o365		http://lp70ejv.site/o365		0	
+https://uk4kz0s.top/hr	1	https	uk4kz0s.top	/hr		https://uk4kz0s.top/hr		0	
+https://4yl3rz6.shop/login	1	https	4yl3rz6.shop	/login		https://4yl3rz6.shop/login		0	
+https://click.contoso.example/t/abc	1	https	click.contoso.example	/t/abc		https://click.contoso.example/t/abc		0	
+https://u297445.ct.sendgrid.net/ls/click?upn=454k4r8hjkfvjj3aygumntflkbnyi0	1	https	u297445.ct.sendgrid.net	/ls/click	upn=454k4r8hjkfvjj3aygumntflkbnyi0	https://u297445.ct.sendgrid.net/ls/click?upn=454k4r8hjkfvjj3aygumntflkbnyi0		0	upn\|454k4r8hjkfvjj3aygumntflkbnyi0
+https://www.google.com/url?q=https://example.org/page&sa=D	1	https	www.google.com	/url	q=https://example.org/page&sa=D	https://www.google.com/url?q=https://example.org/page&sa=D		0	q\|https://example.org/page\|sa\|D
+https://nam12.safelinks.protection.outlook.com/?url=https%3A%2F%2Fportal.contoso.example%2Fs&data=05	1	https	nam12.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fportal.contoso.example%2Fs&data=05	https://nam12.safelinks.protection.outlook.com/?url=https%3A%2F%2Fportal.contoso.example%2Fs&data=05		0	url\|https://portal.contoso.example/s\|data\|05
+https://u39317.ct.sendgrid.net/ls/click?upn=3j960zovtn1skl0gsb4lhzjd3ce34j	1	https	u39317.ct.sendgrid.net	/ls/click	upn=3j960zovtn1skl0gsb4lhzjd3ce34j	https://u39317.ct.sendgrid.net/ls/click?upn=3j960zovtn1skl0gsb4lhzjd3ce34j		0	upn\|3j960zovtn1skl0gsb4lhzjd3ce34j
+https://u25438.ct.sendgrid.net/ls/click?upn=r7tm4e44ckszn1g5agqrd5rzsdvamf	1	https	u25438.ct.sendgrid.net	/ls/click	upn=r7tm4e44ckszn1g5agqrd5rzsdvamf	https://u25438.ct.sendgrid.net/ls/click?upn=r7tm4e44ckszn1g5agqrd5rzsdvamf		0	upn\|r7tm4e44ckszn1g5agqrd5rzsdvamf
+https://u544819.ct.sendgrid.net/ls/click?upn=wajjk9ze9je5e6nm1mxow2od03p4mg	1	https	u544819.ct.sendgrid.net	/ls/click	upn=wajjk9ze9je5e6nm1mxow2od03p4mg	https://u544819.ct.sendgrid.net/ls/click?upn=wajjk9ze9je5e6nm1mxow2od03p4mg		0	upn\|wajjk9ze9je5e6nm1mxow2od03p4mg
+https://u317039.ct.sendgrid.net/ls/click?upn=ffxx0gl8lx4u6qcfi0opax7hczh82s	1	https	u317039.ct.sendgrid.net	/ls/click	upn=ffxx0gl8lx4u6qcfi0opax7hczh82s	https://u317039.ct.sendgrid.net/ls/click?upn=ffxx0gl8lx4u6qcfi0opax7hczh82s		0	upn\|ffxx0gl8lx4u6qcfi0opax7hczh82s
+https://u609359.ct.sendgrid.net/ls/click?upn=9iyo9q3v9reb717x3o6gkv4nupr2i2	1	https	u609359.ct.sendgrid.net	/ls/click	upn=9iyo9q3v9reb717x3o6gkv4nupr2i2	https://u609359.ct.sendgrid.net/ls/click?upn=9iyo9q3v9reb717x3o6gkv4nupr2i2		0	upn\|9iyo9q3v9reb717x3o6gkv4nupr2i2
+https://u12556.ct.sendgrid.net/ls/click?upn=hlggmz61m8323dcyfaap2qf3ulhyz6	1	https	u12556.ct.sendgrid.net	/ls/click	upn=hlggmz61m8323dcyfaap2qf3ulhyz6	https://u12556.ct.sendgrid.net/ls/click?upn=hlggmz61m8323dcyfaap2qf3ulhyz6		0	upn\|hlggmz61m8323dcyfaap2qf3ulhyz6
+https://u52569.ct.sendgrid.net/ls/click?upn=6miijv2lhuaxy4w4hjbwf1qnvja093	1	https	u52569.ct.sendgrid.net	/ls/click	upn=6miijv2lhuaxy4w4hjbwf1qnvja093	https://u52569.ct.sendgrid.net/ls/click?upn=6miijv2lhuaxy4w4hjbwf1qnvja093		0	upn\|6miijv2lhuaxy4w4hjbwf1qnvja093
+https://u73094.ct.sendgrid.net/ls/click?upn=3p5dlf09a6q86sahleplq1qbzn5twz	1	https	u73094.ct.sendgrid.net	/ls/click	upn=3p5dlf09a6q86sahleplq1qbzn5twz	https://u73094.ct.sendgrid.net/ls/click?upn=3p5dlf09a6q86sahleplq1qbzn5twz		0	upn\|3p5dlf09a6q86sahleplq1qbzn5twz
+https://u641663.ct.sendgrid.net/ls/click?upn=ifru3orkhaqoc4596wb0zxuczonbql	1	https	u641663.ct.sendgrid.net	/ls/click	upn=ifru3orkhaqoc4596wb0zxuczonbql	https://u641663.ct.sendgrid.net/ls/click?upn=ifru3orkhaqoc4596wb0zxuczonbql		0	upn\|ifru3orkhaqoc4596wb0zxuczonbql
+https://paypa1.com/signin	1	https	paypa1.com	/signin		https://paypa1.com/signin		0	
+https://аpple.com/id	1	https	xn--pple-43d.com	/id		https://xn--pple-43d.com/id		8	
+https://xn--pple-43d.com/id	1	https	xn--pple-43d.com	/id		https://xn--pple-43d.com/id		8	
+https://micros0ft-support.com/	1	https	micros0ft-support.com	/		https://micros0ft-support.com/		0	
+https://docusign-review.net/d	1	https	docusign-review.net	/d		https://docusign-review.net/d		0	
+https://fabrikarn.example/invoice	1	https	fabrikarn.example	/invoice		https://fabrikarn.example/invoice		0	
+https://github.com/org/repo	1	https	github.com	/org/repo		https://github.com/org/repo		0	
+https://www.apple.com/	1	https	www.apple.com	/		https://www.apple.com/		0	
+https://www.paypal.com/	1	https	www.paypal.com	/		https://www.paypal.com/		0	
+https://contoso.example/	1	https	contoso.example	/		https://contoso.example/		0	
+https://paypal.com@1w3f73e.site/login	1	https	1w3f73e.site	/login		https://1w3f73e.site/login		1	
+https://1w3f73e.site/login	1	https	1w3f73e.site	/login		https://1w3f73e.site/login		0	
+http://3232235777/login	1	http	192.168.1.1	/login		http://192.168.1.1/login		2	
+http://192.168.1.1/login	1	http	192.168.1.1	/login		http://192.168.1.1/login		2	
+http://0x7f.0x0.0x0.0x1/admin	1	http	127.0.0.1	/admin		http://127.0.0.1/admin		2	
+http://127.0.0.1/admin	1	http	127.0.0.1	/admin		http://127.0.0.1/admin		2	
+https://%70aypal.ei0ac1f.info/	1	https	paypal.ei0ac1f.info	/		https://paypal.ei0ac1f.info/		4	
+https://paypal.ei0ac1f.info/	1	https	paypal.ei0ac1f.info	/		https://paypal.ei0ac1f.info/		0	
+https://paypal.com.secure-login.n6ctifn.info/	1	https	paypal.com.secure-login.n6ctifn.info	/		https://paypal.com.secure-login.n6ctifn.info/		0	
+http://192.0.2.44/office	1	http	192.0.2.44	/office		http://192.0.2.44/office		2	
+https://paypal.com@xiyua7u.click/login	1	https	xiyua7u.click	/login		https://xiyua7u.click/login		1	
+https://xiyua7u.click/login	1	https	xiyua7u.click	/login		https://xiyua7u.click/login		0	
+https://%70aypal.hwkj1hu.xyz/	1	https	paypal.hwkj1hu.xyz	/		https://paypal.hwkj1hu.xyz/		4	
+https://paypal.hwkj1hu.xyz/	1	https	paypal.hwkj1hu.xyz	/		https://paypal.hwkj1hu.xyz/		0	
+https://paypal.com.secure-login.yg7kmq7.online/	1	https	paypal.com.secure-login.yg7kmq7.online	/		https://paypal.com.secure-login.yg7kmq7.online/		0	
+https://paypal.com@35os0om.site/login	1	https	35os0om.site	/login		https://35os0om.site/login		1	
+https://35os0om.site/login	1	https	35os0om.site	/login		https://35os0om.site/login		0	
+https://%70aypal.1s07hib.site/	1	https	paypal.1s07hib.site	/		https://paypal.1s07hib.site/		4	
+https://paypal.1s07hib.site/	1	https	paypal.1s07hib.site	/		https://paypal.1s07hib.site/		0	
+https://paypal.com.secure-login.6vq3bye.xyz/	1	https	paypal.com.secure-login.6vq3bye.xyz	/		https://paypal.com.secure-login.6vq3bye.xyz/		0	
+https://paypal.com@vvvsalk.click/login	1	https	vvvsalk.click	/login		https://vvvsalk.click/login		1	
+https://vvvsalk.click/login	1	https	vvvsalk.click	/login		https://vvvsalk.click/login		0	
+https://%70aypal.i9gbjss.xyz/	1	https	paypal.i9gbjss.xyz	/		https://paypal.i9gbjss.xyz/		4	
+https://paypal.i9gbjss.xyz/	1	https	paypal.i9gbjss.xyz	/		https://paypal.i9gbjss.xyz/		0	
+https://paypal.com.secure-login.602zrnp.site/	1	https	paypal.com.secure-login.602zrnp.site	/		https://paypal.com.secure-login.602zrnp.site/		0	
+https://paypal.com@7bfekjp.shop/login	1	https	7bfekjp.shop	/login		https://7bfekjp.shop/login		1	
+https://7bfekjp.shop/login	1	https	7bfekjp.shop	/login		https://7bfekjp.shop/login		0	
+https://%70aypal.pe6qjfg.xyz/	1	https	paypal.pe6qjfg.xyz	/		https://paypal.pe6qjfg.xyz/		4	
+https://paypal.pe6qjfg.xyz/	1	https	paypal.pe6qjfg.xyz	/		https://paypal.pe6qjfg.xyz/		0	
+https://paypal.com.secure-login.930vb3d.live/	1	https	paypal.com.secure-login.930vb3d.live	/		https://paypal.com.secure-login.930vb3d.live/		0	
+https://paypal.com@oaney2d.xyz/login	1	https	oaney2d.xyz	/login		https://oaney2d.xyz/login		1	
+https://oaney2d.xyz/login	1	https	oaney2d.xyz	/login		https://oaney2d.xyz/login		0	
+https://%70aypal.4e4d1nd.live/	1	https	paypal.4e4d1nd.live	/		https://paypal.4e4d1nd.live/		4	
+https://paypal.4e4d1nd.live/	1	https	paypal.4e4d1nd.live	/		https://paypal.4e4d1nd.live/		0	
+https://paypal.com.secure-login.8pshsq2.site/	1	https	paypal.com.secure-login.8pshsq2.site	/		https://paypal.com.secure-login.8pshsq2.site/		0	
+https://paypal.com@5ozqlgv.info/login	1	https	5ozqlgv.info	/login		https://5ozqlgv.info/login		1	
+https://5ozqlgv.info/login	1	https	5ozqlgv.info	/login		https://5ozqlgv.info/login		0	
+https://%70aypal.6gav3em.info/	1	https	paypal.6gav3em.info	/		https://paypal.6gav3em.info/		4	
+https://paypal.6gav3em.info/	1	https	paypal.6gav3em.info	/		https://paypal.6gav3em.info/		0	
+https://a.b.c.files.contoso.example/x	1	https	a.b.c.files.contoso.example	/x		https://a.b.c.files.contoso.example/x		0	
+https://www.contoso.example/search?q=a%20b	1	https	www.contoso.example	/search	q=a%20b	https://www.contoso.example/search?q=a%20b		0	q\|a b
+https://docs.contoso.example:443/	1	https	docs.contoso.example	/		https://docs.contoso.example/		0	
+https://docs.contoso.example/	1	https	docs.contoso.example	/		https://docs.contoso.example/		0	
+file://4j9xsn6.online/share/invoice.pdf	1	file	4j9xsn6.online	/share/invoice.pdf		file://4j9xsn6.online/share/invoice.pdf		0	
+search-ms:query=invoice&crumb=location:\\\\pckawi7.info\\share	1	search-ms		/		search-ms:query=invoice&crumb=location:\\\\pckawi7.info\\share		0	
+ms-msdt:/id PCWDiagnostic /skip force	1	ms-msdt		/		ms-msdt:/id PCWDiagnostic /skip force		0	
+smb://dj9na0c.xyz/share	1	smb		/		smb://dj9na0c.xyz/share		0	
+file://ido9g3r.online/share/invoice.pdf	1	file	ido9g3r.online	/share/invoice.pdf		file://ido9g3r.online/share/invoice.pdf		0	
+search-ms:query=invoice&crumb=location:\\\\o67v3i3.online\\share	1	search-ms		/		search-ms:query=invoice&crumb=location:\\\\o67v3i3.online\\share		0	
+smb://jk70qtd.top/share	1	smb		/		smb://jk70qtd.top/share		0	
+file://0v5jkai.xyz/share/invoice.pdf	1	file	0v5jkai.xyz	/share/invoice.pdf		file://0v5jkai.xyz/share/invoice.pdf		0	
+search-ms:query=invoice&crumb=location:\\\\usnqj80.online\\share	1	search-ms		/		search-ms:query=invoice&crumb=location:\\\\usnqj80.online\\share		0	
+smb://06zwlsh.site/share	1	smb		/		smb://06zwlsh.site/share		0	
+file://akzvh2t.shop/share/invoice.pdf	1	file	akzvh2t.shop	/share/invoice.pdf		file://akzvh2t.shop/share/invoice.pdf		0	
+search-ms:query=invoice&crumb=location:\\\\m3g4pkj.live\\share	1	search-ms		/		search-ms:query=invoice&crumb=location:\\\\m3g4pkj.live\\share		0	
+smb://1zq5d7e.site/share	1	smb		/		smb://1zq5d7e.site/share		0	
+file://1s6ijvp.info/share/invoice.pdf	1	file	1s6ijvp.info	/share/invoice.pdf		file://1s6ijvp.info/share/invoice.pdf		0	
+search-ms:query=invoice&crumb=location:\\\\iql268d.shop\\share	1	search-ms		/		search-ms:query=invoice&crumb=location:\\\\iql268d.shop\\share		0	
+smb://bu12ele.site/share	1	smb		/		smb://bu12ele.site/share		0	
+file://q0sh2q0.top/share/invoice.pdf	1	file	q0sh2q0.top	/share/invoice.pdf		file://q0sh2q0.top/share/invoice.pdf		0	
+search-ms:query=invoice&crumb=location:\\\\0n1pbcy.info\\share	1	search-ms		/		search-ms:query=invoice&crumb=location:\\\\0n1pbcy.info\\share		0	
+smb://y3ybdki.top/share	1	smb		/		smb://y3ybdki.top/share		0	
+file://wvoxbqo.live/share/invoice.pdf	1	file	wvoxbqo.live	/share/invoice.pdf		file://wvoxbqo.live/share/invoice.pdf		0	
+search-ms:query=invoice&crumb=location:\\\\w2z5ytz.live\\share	1	search-ms		/		search-ms:query=invoice&crumb=location:\\\\w2z5ytz.live\\share		0	
+smb://t84z3hd.online/share	1	smb		/		smb://t84z3hd.online/share		0	
+file://59dq9wa.top/share/invoice.pdf	1	file	59dq9wa.top	/share/invoice.pdf		file://59dq9wa.top/share/invoice.pdf		0	
+search-ms:query=invoice&crumb=location:\\\\ur1f9ys.site\\share	1	search-ms		/		search-ms:query=invoice&crumb=location:\\\\ur1f9ys.site\\share		0	
+smb://b2nui2d.site/share	1	smb		/		smb://b2nui2d.site/share		0	
+file://lnv8ar4.xyz/share/invoice.pdf	1	file	lnv8ar4.xyz	/share/invoice.pdf		file://lnv8ar4.xyz/share/invoice.pdf		0	
+search-ms:query=invoice&crumb=location:\\\\h6oqlwu.online\\share	1	search-ms		/		search-ms:query=invoice&crumb=location:\\\\h6oqlwu.online\\share		0	
+smb://77nqc1k.click/share	1	smb		/		smb://77nqc1k.click/share		0	
+file://6s54tds.site/share/invoice.pdf	1	file	6s54tds.site	/share/invoice.pdf		file://6s54tds.site/share/invoice.pdf		0	
+search-ms:query=invoice&crumb=location:\\\\u3najmr.site\\share	1	search-ms		/		search-ms:query=invoice&crumb=location:\\\\u3najmr.site\\share		0	
+smb://btwrshy.shop/share	1	smb		/		smb://btwrshy.shop/share		0	
+tel:+15550100	1	tel		/		tel:+15550100		0	
+mailto:sales@contoso.example	1	mailto		/		mailto:sales@contoso.example	contoso.example	0	
+https://bit.ly/ivr2qop	1	https	bit.ly	/ivr2qop		https://bit.ly/ivr2qop		0	
+https://tinyurl.com/dne74yc	1	https	tinyurl.com	/dne74yc		https://tinyurl.com/dne74yc		0	
+https://www.google.com/url?q=https://34gbp4i.site/x	1	https	www.google.com	/url	q=https://34gbp4i.site/x	https://www.google.com/url?q=https://34gbp4i.site/x		0	q\|https://34gbp4i.site/x
+https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2F9ra7lp4.info%2Fl&data=1	1	https	nam02.safelinks.protection.outlook.com	/	url=https%3A%2F%2F9ra7lp4.info%2Fl&data=1	https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2F9ra7lp4.info%2Fl&data=1		0	url\|https://9ra7lp4.info/l\|data\|1
+https://cutt.ly/fp2aggu	1	https	cutt.ly	/fp2aggu		https://cutt.ly/fp2aggu		0	
+https://bit.ly/4vwagb0	1	https	bit.ly	/4vwagb0		https://bit.ly/4vwagb0		0	
+https://tinyurl.com/p3js5ir	1	https	tinyurl.com	/p3js5ir		https://tinyurl.com/p3js5ir		0	
+https://www.google.com/url?q=https://apwkxsd.online/x	1	https	www.google.com	/url	q=https://apwkxsd.online/x	https://www.google.com/url?q=https://apwkxsd.online/x		0	q\|https://apwkxsd.online/x
+https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fdi7m2pa.site%2Fl&data=1	1	https	nam02.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fdi7m2pa.site%2Fl&data=1	https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fdi7m2pa.site%2Fl&data=1		0	url\|https://di7m2pa.site/l\|data\|1
+https://cutt.ly/sw5yw5k	1	https	cutt.ly	/sw5yw5k		https://cutt.ly/sw5yw5k		0	
+https://bit.ly/2zvfj2g	1	https	bit.ly	/2zvfj2g		https://bit.ly/2zvfj2g		0	
+https://tinyurl.com/vrosowj	1	https	tinyurl.com	/vrosowj		https://tinyurl.com/vrosowj		0	
+https://www.google.com/url?q=https://8yb022a.online/x	1	https	www.google.com	/url	q=https://8yb022a.online/x	https://www.google.com/url?q=https://8yb022a.online/x		0	q\|https://8yb022a.online/x
+https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fycvcyj1.xyz%2Fl&data=1	1	https	nam02.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fycvcyj1.xyz%2Fl&data=1	https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fycvcyj1.xyz%2Fl&data=1		0	url\|https://ycvcyj1.xyz/l\|data\|1
+https://cutt.ly/cdmrq3u	1	https	cutt.ly	/cdmrq3u		https://cutt.ly/cdmrq3u		0	
+https://bit.ly/j1046gq	1	https	bit.ly	/j1046gq		https://bit.ly/j1046gq		0	
+https://tinyurl.com/etx2rnl	1	https	tinyurl.com	/etx2rnl		https://tinyurl.com/etx2rnl		0	
+https://www.google.com/url?q=https://tb4t7pc.online/x	1	https	www.google.com	/url	q=https://tb4t7pc.online/x	https://www.google.com/url?q=https://tb4t7pc.online/x		0	q\|https://tb4t7pc.online/x
+https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fb47l985.click%2Fl&data=1	1	https	nam02.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fb47l985.click%2Fl&data=1	https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fb47l985.click%2Fl&data=1		0	url\|https://b47l985.click/l\|data\|1
+https://cutt.ly/2ek5b8z	1	https	cutt.ly	/2ek5b8z		https://cutt.ly/2ek5b8z		0	
+https://bit.ly/6rlrrne	1	https	bit.ly	/6rlrrne		https://bit.ly/6rlrrne		0	
+https://tinyurl.com/589yx1e	1	https	tinyurl.com	/589yx1e		https://tinyurl.com/589yx1e		0	
+https://www.google.com/url?q=https://w5kmjv9.site/x	1	https	www.google.com	/url	q=https://w5kmjv9.site/x	https://www.google.com/url?q=https://w5kmjv9.site/x		0	q\|https://w5kmjv9.site/x
+https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2Frkb5a8p.xyz%2Fl&data=1	1	https	nam02.safelinks.protection.outlook.com	/	url=https%3A%2F%2Frkb5a8p.xyz%2Fl&data=1	https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2Frkb5a8p.xyz%2Fl&data=1		0	url\|https://rkb5a8p.xyz/l\|data\|1
+https://cutt.ly/36411u8	1	https	cutt.ly	/36411u8		https://cutt.ly/36411u8		0	
+https://bit.ly/pw3pnlz	1	https	bit.ly	/pw3pnlz		https://bit.ly/pw3pnlz		0	
+https://tinyurl.com/atzzoj6	1	https	tinyurl.com	/atzzoj6		https://tinyurl.com/atzzoj6		0	
+https://www.google.com/url?q=https://waacwrl.site/x	1	https	www.google.com	/url	q=https://waacwrl.site/x	https://www.google.com/url?q=https://waacwrl.site/x		0	q\|https://waacwrl.site/x
+https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fnfgys5u.click%2Fl&data=1	1	https	nam02.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fnfgys5u.click%2Fl&data=1	https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fnfgys5u.click%2Fl&data=1		0	url\|https://nfgys5u.click/l\|data\|1
+https://cutt.ly/p85c0aj	1	https	cutt.ly	/p85c0aj		https://cutt.ly/p85c0aj		0	
+https://bit.ly/k4tjrhq	1	https	bit.ly	/k4tjrhq		https://bit.ly/k4tjrhq		0	
+https://tinyurl.com/ffixudg	1	https	tinyurl.com	/ffixudg		https://tinyurl.com/ffixudg		0	
+https://www.google.com/url?q=https://4zy9jw6.info/x	1	https	www.google.com	/url	q=https://4zy9jw6.info/x	https://www.google.com/url?q=https://4zy9jw6.info/x		0	q\|https://4zy9jw6.info/x
+https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fba9id8e.site%2Fl&data=1	1	https	nam02.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fba9id8e.site%2Fl&data=1	https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2Fba9id8e.site%2Fl&data=1		0	url\|https://ba9id8e.site/l\|data\|1
+https://cutt.ly/jywd61x	1	https	cutt.ly	/jywd61x		https://cutt.ly/jywd61x		0	
+https://bit.ly/1hm4b7z	1	https	bit.ly	/1hm4b7z		https://bit.ly/1hm4b7z		0	
+https://tinyurl.com/h5e0aqj	1	https	tinyurl.com	/h5e0aqj		https://tinyurl.com/h5e0aqj		0	
+https://www.google.com/url?q=https://9axcuh3.shop/x	1	https	www.google.com	/url	q=https://9axcuh3.shop/x	https://www.google.com/url?q=https://9axcuh3.shop/x		0	q\|https://9axcuh3.shop/x
+https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2Ftnx8xsp.live%2Fl&data=1	1	https	nam02.safelinks.protection.outlook.com	/	url=https%3A%2F%2Ftnx8xsp.live%2Fl&data=1	https://nam02.safelinks.protection.outlook.com/?url=https%3A%2F%2Ftnx8xsp.live%2Fl&data=1		0	url\|https://tnx8xsp.live/l\|data\|1
+https://cutt.ly/00ycfnj	1	https	cutt.ly	/00ycfnj		https://cutt.ly/00ycfnj		0	
+https://aka.ms/vkt0mv	1	https	aka.ms	/vkt0mv		https://aka.ms/vkt0mv		0	
+https://aka.ms/7qtvcw	1	https	aka.ms	/7qtvcw		https://aka.ms/7qtvcw		0	
+https://aka.ms/ecvlq5	1	https	aka.ms	/ecvlq5		https://aka.ms/ecvlq5		0	
+https://aka.ms/3rgz4y	1	https	aka.ms	/3rgz4y		https://aka.ms/3rgz4y		0	
+https://aka.ms/fu6yuj	1	https	aka.ms	/fu6yuj		https://aka.ms/fu6yuj		0	
+https://aka.ms/hkpmvr	1	https	aka.ms	/hkpmvr		https://aka.ms/hkpmvr		0	
+https://aka.ms/b5wmdd	1	https	aka.ms	/b5wmdd		https://aka.ms/b5wmdd		0	
+https://aka.ms/73xjcu	1	https	aka.ms	/73xjcu		https://aka.ms/73xjcu		0	
+https://aka.ms/y4czgb	1	https	aka.ms	/y4czgb		https://aka.ms/y4czgb		0	
+https://aka.ms/eg7kih	1	https	aka.ms	/eg7kih		https://aka.ms/eg7kih		0	
+https://aka.ms/4m0qw0	1	https	aka.ms	/4m0qw0		https://aka.ms/4m0qw0		0	
+https://aka.ms/nsfxm5	1	https	aka.ms	/nsfxm5		https://aka.ms/nsfxm5		0	
+https://aka.ms/ygu396	1	https	aka.ms	/ygu396		https://aka.ms/ygu396		0	
+https://aka.ms/zhxx3z	1	https	aka.ms	/zhxx3z		https://aka.ms/zhxx3z		0	
+https://aka.ms/c28qp1	1	https	aka.ms	/c28qp1		https://aka.ms/c28qp1		0	
+https://aka.ms/tmu0d7	1	https	aka.ms	/tmu0d7		https://aka.ms/tmu0d7		0	
+https://aka.ms/8j0rx2	1	https	aka.ms	/8j0rx2		https://aka.ms/8j0rx2		0	
+https://aka.ms/8b4ak1	1	https	aka.ms	/8b4ak1		https://aka.ms/8b4ak1		0	
+https://aka.ms/ky7iar	1	https	aka.ms	/ky7iar		https://aka.ms/ky7iar		0	
+https://aka.ms/2ufn09	1	https	aka.ms	/2ufn09		https://aka.ms/2ufn09		0	
+https://aka.ms/r0ifbc	1	https	aka.ms	/r0ifbc		https://aka.ms/r0ifbc		0	
+https://aka.ms/g8u7km	1	https	aka.ms	/g8u7km		https://aka.ms/g8u7km		0	
+https://aka.ms/14i18q	1	https	aka.ms	/14i18q		https://aka.ms/14i18q		0	
+https://aka.ms/w87qqa	1	https	aka.ms	/w87qqa		https://aka.ms/w87qqa		0	
+https://aka.ms/zvgd2h	1	https	aka.ms	/zvgd2h		https://aka.ms/zvgd2h		0	
+https://aka.ms/5ccr04	1	https	aka.ms	/5ccr04		https://aka.ms/5ccr04		0	
+https://aka.ms/bp6e8h	1	https	aka.ms	/bp6e8h		https://aka.ms/bp6e8h		0	
+https://aka.ms/uvmt7t	1	https	aka.ms	/uvmt7t		https://aka.ms/uvmt7t		0	
+https://aka.ms/qhepc6	1	https	aka.ms	/qhepc6		https://aka.ms/qhepc6		0	
+https://aka.ms/5ke0m2	1	https	aka.ms	/5ke0m2		https://aka.ms/5ke0m2		0	
+https://aka.ms/rhnuty	1	https	aka.ms	/rhnuty		https://aka.ms/rhnuty		0	
+https://aka.ms/2q39dl	1	https	aka.ms	/2q39dl		https://aka.ms/2q39dl		0	
+https://aka.ms/a4onhg	1	https	aka.ms	/a4onhg		https://aka.ms/a4onhg		0	
+https://aka.ms/wat9gf	1	https	aka.ms	/wat9gf		https://aka.ms/wat9gf		0	
+https://aka.ms/vnrxnr	1	https	aka.ms	/vnrxnr		https://aka.ms/vnrxnr		0	
+https://aka.ms/5odsw3	1	https	aka.ms	/5odsw3		https://aka.ms/5odsw3		0	
+https://aka.ms/9blrg3	1	https	aka.ms	/9blrg3		https://aka.ms/9blrg3		0	
+https://aka.ms/jaw3te	1	https	aka.ms	/jaw3te		https://aka.ms/jaw3te		0	
+https://aka.ms/7qt9on	1	https	aka.ms	/7qt9on		https://aka.ms/7qt9on		0	
+https://aka.ms/mzh1kk	1	https	aka.ms	/mzh1kk		https://aka.ms/mzh1kk		0	
+https://vi5pd6om.pages.dev/login	1	https	vi5pd6om.pages.dev	/login		https://vi5pd6om.pages.dev/login		0	
+https://firebasestorage.googleapis.com/v0/b/pdtu1k2h/o/i.html	1	https	firebasestorage.googleapis.com	/v0/b/pdtu1k2h/o/i.html		https://firebasestorage.googleapis.com/v0/b/pdtu1k2h/o/i.html		0	
+https://gjquc60s-my.sharepoint.com/:b:/g/personal/x	1	https	gjquc60s-my.sharepoint.com	/:b:/g/personal/x		https://gjquc60s-my.sharepoint.com/:b:/g/personal/x		0	
+https://pngnq2am.web.app/	1	https	pngnq2am.web.app	/		https://pngnq2am.web.app/		0	
+https://storage.googleapis.com/51bj9s2z/index.html	1	https	storage.googleapis.com	/51bj9s2z/index.html		https://storage.googleapis.com/51bj9s2z/index.html		0	
+https://fq3jzfmm.workers.dev/	1	https	fq3jzfmm.workers.dev	/		https://fq3jzfmm.workers.dev/		0	
+https://ntfbvhvg.pages.dev/login	1	https	ntfbvhvg.pages.dev	/login		https://ntfbvhvg.pages.dev/login		0	
+https://firebasestorage.googleapis.com/v0/b/foawldrf/o/i.html	1	https	firebasestorage.googleapis.com	/v0/b/foawldrf/o/i.html		https://firebasestorage.googleapis.com/v0/b/foawldrf/o/i.html		0	
+https://pzu5zjcf-my.sharepoint.com/:b:/g/personal/x	1	https	pzu5zjcf-my.sharepoint.com	/:b:/g/personal/x		https://pzu5zjcf-my.sharepoint.com/:b:/g/personal/x		0	
+https://tbgj5cm2.web.app/	1	https	tbgj5cm2.web.app	/		https://tbgj5cm2.web.app/		0	
+https://storage.googleapis.com/tbvwf7on/index.html	1	https	storage.googleapis.com	/tbvwf7on/index.html		https://storage.googleapis.com/tbvwf7on/index.html		0	
+https://06pkozng.workers.dev/	1	https	06pkozng.workers.dev	/		https://06pkozng.workers.dev/		0	
+https://fla5f2og.pages.dev/login	1	https	fla5f2og.pages.dev	/login		https://fla5f2og.pages.dev/login		0	
+https://firebasestorage.googleapis.com/v0/b/uzhojo3d/o/i.html	1	https	firebasestorage.googleapis.com	/v0/b/uzhojo3d/o/i.html		https://firebasestorage.googleapis.com/v0/b/uzhojo3d/o/i.html		0	
+https://sl4xjfbc-my.sharepoint.com/:b:/g/personal/x	1	https	sl4xjfbc-my.sharepoint.com	/:b:/g/personal/x		https://sl4xjfbc-my.sharepoint.com/:b:/g/personal/x		0	
+https://pdav7s75.web.app/	1	https	pdav7s75.web.app	/		https://pdav7s75.web.app/		0	
+https://storage.googleapis.com/ret8ir1w/index.html	1	https	storage.googleapis.com	/ret8ir1w/index.html		https://storage.googleapis.com/ret8ir1w/index.html		0	
+https://ec1e6mjm.workers.dev/	1	https	ec1e6mjm.workers.dev	/		https://ec1e6mjm.workers.dev/		0	
+https://pgkbpd6l.pages.dev/login	1	https	pgkbpd6l.pages.dev	/login		https://pgkbpd6l.pages.dev/login		0	
+https://firebasestorage.googleapis.com/v0/b/icjr3iw1/o/i.html	1	https	firebasestorage.googleapis.com	/v0/b/icjr3iw1/o/i.html		https://firebasestorage.googleapis.com/v0/b/icjr3iw1/o/i.html		0	
+https://37if55by-my.sharepoint.com/:b:/g/personal/x	1	https	37if55by-my.sharepoint.com	/:b:/g/personal/x		https://37if55by-my.sharepoint.com/:b:/g/personal/x		0	
+https://o442qgis.web.app/	1	https	o442qgis.web.app	/		https://o442qgis.web.app/		0	
+https://storage.googleapis.com/48l2lpab/index.html	1	https	storage.googleapis.com	/48l2lpab/index.html		https://storage.googleapis.com/48l2lpab/index.html		0	
+https://kgamegsw.workers.dev/	1	https	kgamegsw.workers.dev	/		https://kgamegsw.workers.dev/		0	
+https://cj23xqmu.pages.dev/login	1	https	cj23xqmu.pages.dev	/login		https://cj23xqmu.pages.dev/login		0	
+https://firebasestorage.googleapis.com/v0/b/dmt7n65u/o/i.html	1	https	firebasestorage.googleapis.com	/v0/b/dmt7n65u/o/i.html		https://firebasestorage.googleapis.com/v0/b/dmt7n65u/o/i.html		0	
+https://fo3v5ebj-my.sharepoint.com/:b:/g/personal/x	1	https	fo3v5ebj-my.sharepoint.com	/:b:/g/personal/x		https://fo3v5ebj-my.sharepoint.com/:b:/g/personal/x		0	
+https://px5cboy9.web.app/	1	https	px5cboy9.web.app	/		https://px5cboy9.web.app/		0	
+https://storage.googleapis.com/tbteu1gi/index.html	1	https	storage.googleapis.com	/tbteu1gi/index.html		https://storage.googleapis.com/tbteu1gi/index.html		0	
+https://fyy7bwdn.workers.dev/	1	https	fyy7bwdn.workers.dev	/		https://fyy7bwdn.workers.dev/		0	
+https://5ixtfw7m.pages.dev/login	1	https	5ixtfw7m.pages.dev	/login		https://5ixtfw7m.pages.dev/login		0	
+https://firebasestorage.googleapis.com/v0/b/nzv5lc5t/o/i.html	1	https	firebasestorage.googleapis.com	/v0/b/nzv5lc5t/o/i.html		https://firebasestorage.googleapis.com/v0/b/nzv5lc5t/o/i.html		0	
+https://v529yc4n-my.sharepoint.com/:b:/g/personal/x	1	https	v529yc4n-my.sharepoint.com	/:b:/g/personal/x		https://v529yc4n-my.sharepoint.com/:b:/g/personal/x		0	
+https://dqqhowt9.web.app/	1	https	dqqhowt9.web.app	/		https://dqqhowt9.web.app/		0	
+https://storage.googleapis.com/aj6d70a3/index.html	1	https	storage.googleapis.com	/aj6d70a3/index.html		https://storage.googleapis.com/aj6d70a3/index.html		0	
+https://ujuz8w67.workers.dev/	1	https	ujuz8w67.workers.dev	/		https://ujuz8w67.workers.dev/		0	
+https://fpbtrfg0.pages.dev/login	1	https	fpbtrfg0.pages.dev	/login		https://fpbtrfg0.pages.dev/login		0	
+https://firebasestorage.googleapis.com/v0/b/5uwtldu3/o/i.html	1	https	firebasestorage.googleapis.com	/v0/b/5uwtldu3/o/i.html		https://firebasestorage.googleapis.com/v0/b/5uwtldu3/o/i.html		0	
+https://7kfoascg-my.sharepoint.com/:b:/g/personal/x	1	https	7kfoascg-my.sharepoint.com	/:b:/g/personal/x		https://7kfoascg-my.sharepoint.com/:b:/g/personal/x		0	
+https://xi7feiyd.web.app/	1	https	xi7feiyd.web.app	/		https://xi7feiyd.web.app/		0	
+https://www.contoso.example/docs	1	https	www.contoso.example	/docs		https://www.contoso.example/docs		0	
+https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=zhd136dz66dpfec4yvix&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://cdm174k.online/cb	1	https	login.microsoftonline.com	/common/oauth2/v2.0/authorize	client_id=zhd136dz66dpfec4yvix&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://cdm174k.online/cb	https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=zhd136dz66dpfec4yvix&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://cdm174k.online/cb		0	client_id\|zhd136dz66dpfec4yvix\|response_type\|code\|scope\|Mail.Read offline_access\|redirect_uri\|https://cdm174k.online/cb
+https://accounts.google.com/o/oauth2/v2/auth?client_id=ttiovonetj0v2sdlbr4l.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://3hfvfqa.shop/cb	1	https	accounts.google.com	/o/oauth2/v2/auth	client_id=ttiovonetj0v2sdlbr4l.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://3hfvfqa.shop/cb	https://accounts.google.com/o/oauth2/v2/auth?client_id=ttiovonetj0v2sdlbr4l.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://3hfvfqa.shop/cb		0	client_id\|ttiovonetj0v2sdlbr4l.apps.googleusercontent.com\|scope\|https://mail.google.com/\|redirect_uri\|https://3hfvfqa.shop/cb
+https://github.com/login/oauth/authorize?client_id=tw0iv5nly1h8jmm28k4b&scope=repo	1	https	github.com	/login/oauth/authorize	client_id=tw0iv5nly1h8jmm28k4b&scope=repo	https://github.com/login/oauth/authorize?client_id=tw0iv5nly1h8jmm28k4b&scope=repo		0	client_id\|tw0iv5nly1h8jmm28k4b\|scope\|repo
+https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=jnfrxxkiwei24psch36c&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://wes84ko.site/cb	1	https	login.microsoftonline.com	/common/oauth2/v2.0/authorize	client_id=jnfrxxkiwei24psch36c&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://wes84ko.site/cb	https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=jnfrxxkiwei24psch36c&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://wes84ko.site/cb		0	client_id\|jnfrxxkiwei24psch36c\|response_type\|code\|scope\|Mail.Read offline_access\|redirect_uri\|https://wes84ko.site/cb
+https://accounts.google.com/o/oauth2/v2/auth?client_id=ttmbf8tv1gathbnx79s1.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://xf0cjz4.info/cb	1	https	accounts.google.com	/o/oauth2/v2/auth	client_id=ttmbf8tv1gathbnx79s1.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://xf0cjz4.info/cb	https://accounts.google.com/o/oauth2/v2/auth?client_id=ttmbf8tv1gathbnx79s1.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://xf0cjz4.info/cb		0	client_id\|ttmbf8tv1gathbnx79s1.apps.googleusercontent.com\|scope\|https://mail.google.com/\|redirect_uri\|https://xf0cjz4.info/cb
+https://github.com/login/oauth/authorize?client_id=rov8a8sxykf69vo0arpm&scope=repo	1	https	github.com	/login/oauth/authorize	client_id=rov8a8sxykf69vo0arpm&scope=repo	https://github.com/login/oauth/authorize?client_id=rov8a8sxykf69vo0arpm&scope=repo		0	client_id\|rov8a8sxykf69vo0arpm\|scope\|repo
+https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=ttn5bx8a5k5xq6wct3cr&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://533iio4.live/cb	1	https	login.microsoftonline.com	/common/oauth2/v2.0/authorize	client_id=ttn5bx8a5k5xq6wct3cr&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://533iio4.live/cb	https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=ttn5bx8a5k5xq6wct3cr&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://533iio4.live/cb		0	client_id\|ttn5bx8a5k5xq6wct3cr\|response_type\|code\|scope\|Mail.Read offline_access\|redirect_uri\|https://533iio4.live/cb
+https://accounts.google.com/o/oauth2/v2/auth?client_id=85c38vkiba7z0txfy25z.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://7btaohx.live/cb	1	https	accounts.google.com	/o/oauth2/v2/auth	client_id=85c38vkiba7z0txfy25z.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://7btaohx.live/cb	https://accounts.google.com/o/oauth2/v2/auth?client_id=85c38vkiba7z0txfy25z.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://7btaohx.live/cb		0	client_id\|85c38vkiba7z0txfy25z.apps.googleusercontent.com\|scope\|https://mail.google.com/\|redirect_uri\|https://7btaohx.live/cb
+https://github.com/login/oauth/authorize?client_id=au400xfpkzv5tk30ljji&scope=repo	1	https	github.com	/login/oauth/authorize	client_id=au400xfpkzv5tk30ljji&scope=repo	https://github.com/login/oauth/authorize?client_id=au400xfpkzv5tk30ljji&scope=repo		0	client_id\|au400xfpkzv5tk30ljji\|scope\|repo
+https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=bxxwy1vo8vrfcpkn8avq&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://dnpojwx.xyz/cb	1	https	login.microsoftonline.com	/common/oauth2/v2.0/authorize	client_id=bxxwy1vo8vrfcpkn8avq&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://dnpojwx.xyz/cb	https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=bxxwy1vo8vrfcpkn8avq&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://dnpojwx.xyz/cb		0	client_id\|bxxwy1vo8vrfcpkn8avq\|response_type\|code\|scope\|Mail.Read offline_access\|redirect_uri\|https://dnpojwx.xyz/cb
+https://accounts.google.com/o/oauth2/v2/auth?client_id=8dshais9n17n424yy5ug.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://vx9b5t6.xyz/cb	1	https	accounts.google.com	/o/oauth2/v2/auth	client_id=8dshais9n17n424yy5ug.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://vx9b5t6.xyz/cb	https://accounts.google.com/o/oauth2/v2/auth?client_id=8dshais9n17n424yy5ug.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://vx9b5t6.xyz/cb		0	client_id\|8dshais9n17n424yy5ug.apps.googleusercontent.com\|scope\|https://mail.google.com/\|redirect_uri\|https://vx9b5t6.xyz/cb
+https://github.com/login/oauth/authorize?client_id=zioyvg25fk8ibevkst4n&scope=repo	1	https	github.com	/login/oauth/authorize	client_id=zioyvg25fk8ibevkst4n&scope=repo	https://github.com/login/oauth/authorize?client_id=zioyvg25fk8ibevkst4n&scope=repo		0	client_id\|zioyvg25fk8ibevkst4n\|scope\|repo
+https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=xln9hmj8z8nvfciqw041&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://8nkroqf.info/cb	1	https	login.microsoftonline.com	/common/oauth2/v2.0/authorize	client_id=xln9hmj8z8nvfciqw041&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://8nkroqf.info/cb	https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=xln9hmj8z8nvfciqw041&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://8nkroqf.info/cb		0	client_id\|xln9hmj8z8nvfciqw041\|response_type\|code\|scope\|Mail.Read offline_access\|redirect_uri\|https://8nkroqf.info/cb
+https://accounts.google.com/o/oauth2/v2/auth?client_id=1ofwbw50s79ptkyedswt.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://tr2c2wr.top/cb	1	https	accounts.google.com	/o/oauth2/v2/auth	client_id=1ofwbw50s79ptkyedswt.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://tr2c2wr.top/cb	https://accounts.google.com/o/oauth2/v2/auth?client_id=1ofwbw50s79ptkyedswt.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://tr2c2wr.top/cb		0	client_id\|1ofwbw50s79ptkyedswt.apps.googleusercontent.com\|scope\|https://mail.google.com/\|redirect_uri\|https://tr2c2wr.top/cb
+https://github.com/login/oauth/authorize?client_id=dkv5u4srgyl23vqvgnlt&scope=repo	1	https	github.com	/login/oauth/authorize	client_id=dkv5u4srgyl23vqvgnlt&scope=repo	https://github.com/login/oauth/authorize?client_id=dkv5u4srgyl23vqvgnlt&scope=repo		0	client_id\|dkv5u4srgyl23vqvgnlt\|scope\|repo
+https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=7y1h2m8exvukb249ytir&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://9cfczm3.site/cb	1	https	login.microsoftonline.com	/common/oauth2/v2.0/authorize	client_id=7y1h2m8exvukb249ytir&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://9cfczm3.site/cb	https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=7y1h2m8exvukb249ytir&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://9cfczm3.site/cb		0	client_id\|7y1h2m8exvukb249ytir\|response_type\|code\|scope\|Mail.Read offline_access\|redirect_uri\|https://9cfczm3.site/cb
+https://accounts.google.com/o/oauth2/v2/auth?client_id=g1vpgwgi8gt8ygl1z6v7.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://8wc4q2e.online/cb	1	https	accounts.google.com	/o/oauth2/v2/auth	client_id=g1vpgwgi8gt8ygl1z6v7.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://8wc4q2e.online/cb	https://accounts.google.com/o/oauth2/v2/auth?client_id=g1vpgwgi8gt8ygl1z6v7.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://8wc4q2e.online/cb		0	client_id\|g1vpgwgi8gt8ygl1z6v7.apps.googleusercontent.com\|scope\|https://mail.google.com/\|redirect_uri\|https://8wc4q2e.online/cb
+https://github.com/login/oauth/authorize?client_id=l995h1y1kjwhw42zdx4o&scope=repo	1	https	github.com	/login/oauth/authorize	client_id=l995h1y1kjwhw42zdx4o&scope=repo	https://github.com/login/oauth/authorize?client_id=l995h1y1kjwhw42zdx4o&scope=repo		0	client_id\|l995h1y1kjwhw42zdx4o\|scope\|repo
+https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=ufgenardgzn2n1nyt5dr&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://no1eap3.info/cb	1	https	login.microsoftonline.com	/common/oauth2/v2.0/authorize	client_id=ufgenardgzn2n1nyt5dr&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://no1eap3.info/cb	https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=ufgenardgzn2n1nyt5dr&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://no1eap3.info/cb		0	client_id\|ufgenardgzn2n1nyt5dr\|response_type\|code\|scope\|Mail.Read offline_access\|redirect_uri\|https://no1eap3.info/cb
+https://accounts.google.com/o/oauth2/v2/auth?client_id=xqgscc7y5yclvz40my5x.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://r2wsfkk.shop/cb	1	https	accounts.google.com	/o/oauth2/v2/auth	client_id=xqgscc7y5yclvz40my5x.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://r2wsfkk.shop/cb	https://accounts.google.com/o/oauth2/v2/auth?client_id=xqgscc7y5yclvz40my5x.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://r2wsfkk.shop/cb		0	client_id\|xqgscc7y5yclvz40my5x.apps.googleusercontent.com\|scope\|https://mail.google.com/\|redirect_uri\|https://r2wsfkk.shop/cb
+https://github.com/login/oauth/authorize?client_id=wutrmis1ypre15ev0v5d&scope=repo	1	https	github.com	/login/oauth/authorize	client_id=wutrmis1ypre15ev0v5d&scope=repo	https://github.com/login/oauth/authorize?client_id=wutrmis1ypre15ev0v5d&scope=repo		0	client_id\|wutrmis1ypre15ev0v5d\|scope\|repo
+https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=0qgu64wgygniuo8843j8&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://x6s45mh.xyz/cb	1	https	login.microsoftonline.com	/common/oauth2/v2.0/authorize	client_id=0qgu64wgygniuo8843j8&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://x6s45mh.xyz/cb	https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=0qgu64wgygniuo8843j8&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://x6s45mh.xyz/cb		0	client_id\|0qgu64wgygniuo8843j8\|response_type\|code\|scope\|Mail.Read offline_access\|redirect_uri\|https://x6s45mh.xyz/cb
+https://accounts.google.com/o/oauth2/v2/auth?client_id=wgwawdb5pa0olauomyov.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://z3609c2.live/cb	1	https	accounts.google.com	/o/oauth2/v2/auth	client_id=wgwawdb5pa0olauomyov.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://z3609c2.live/cb	https://accounts.google.com/o/oauth2/v2/auth?client_id=wgwawdb5pa0olauomyov.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://z3609c2.live/cb		0	client_id\|wgwawdb5pa0olauomyov.apps.googleusercontent.com\|scope\|https://mail.google.com/\|redirect_uri\|https://z3609c2.live/cb
+https://github.com/login/oauth/authorize?client_id=6xldl588ws0kd3e9rmgj&scope=repo	1	https	github.com	/login/oauth/authorize	client_id=6xldl588ws0kd3e9rmgj&scope=repo	https://github.com/login/oauth/authorize?client_id=6xldl588ws0kd3e9rmgj&scope=repo		0	client_id\|6xldl588ws0kd3e9rmgj\|scope\|repo
+https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=889w3tn3plszgzd4p70n&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://in06i4l.top/cb	1	https	login.microsoftonline.com	/common/oauth2/v2.0/authorize	client_id=889w3tn3plszgzd4p70n&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://in06i4l.top/cb	https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=889w3tn3plszgzd4p70n&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://in06i4l.top/cb		0	client_id\|889w3tn3plszgzd4p70n\|response_type\|code\|scope\|Mail.Read offline_access\|redirect_uri\|https://in06i4l.top/cb
+https://accounts.google.com/o/oauth2/v2/auth?client_id=g5rkl2ulanbej5x6gu15.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://h0ga40f.live/cb	1	https	accounts.google.com	/o/oauth2/v2/auth	client_id=g5rkl2ulanbej5x6gu15.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://h0ga40f.live/cb	https://accounts.google.com/o/oauth2/v2/auth?client_id=g5rkl2ulanbej5x6gu15.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://h0ga40f.live/cb		0	client_id\|g5rkl2ulanbej5x6gu15.apps.googleusercontent.com\|scope\|https://mail.google.com/\|redirect_uri\|https://h0ga40f.live/cb
+https://github.com/login/oauth/authorize?client_id=ib7muaxghsdhhafjfehc&scope=repo	1	https	github.com	/login/oauth/authorize	client_id=ib7muaxghsdhhafjfehc&scope=repo	https://github.com/login/oauth/authorize?client_id=ib7muaxghsdhhafjfehc&scope=repo		0	client_id\|ib7muaxghsdhhafjfehc\|scope\|repo
+https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=a2jgaw22afid3hf7rlbv&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://mjig7nx.site/cb	1	https	login.microsoftonline.com	/common/oauth2/v2.0/authorize	client_id=a2jgaw22afid3hf7rlbv&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://mjig7nx.site/cb	https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=a2jgaw22afid3hf7rlbv&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://mjig7nx.site/cb		0	client_id\|a2jgaw22afid3hf7rlbv\|response_type\|code\|scope\|Mail.Read offline_access\|redirect_uri\|https://mjig7nx.site/cb
+https://accounts.google.com/o/oauth2/v2/auth?client_id=t0x5fcqasttb876muhlv.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://cui0u8e.online/cb	1	https	accounts.google.com	/o/oauth2/v2/auth	client_id=t0x5fcqasttb876muhlv.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://cui0u8e.online/cb	https://accounts.google.com/o/oauth2/v2/auth?client_id=t0x5fcqasttb876muhlv.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://cui0u8e.online/cb		0	client_id\|t0x5fcqasttb876muhlv.apps.googleusercontent.com\|scope\|https://mail.google.com/\|redirect_uri\|https://cui0u8e.online/cb
+https://github.com/login/oauth/authorize?client_id=1boctwqwpa12tccovhcq&scope=repo	1	https	github.com	/login/oauth/authorize	client_id=1boctwqwpa12tccovhcq&scope=repo	https://github.com/login/oauth/authorize?client_id=1boctwqwpa12tccovhcq&scope=repo		0	client_id\|1boctwqwpa12tccovhcq\|scope\|repo
+https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=k08wh24nz72j8osnposi&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://w7w0z6b.shop/cb	1	https	login.microsoftonline.com	/common/oauth2/v2.0/authorize	client_id=k08wh24nz72j8osnposi&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://w7w0z6b.shop/cb	https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=k08wh24nz72j8osnposi&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://w7w0z6b.shop/cb		0	client_id\|k08wh24nz72j8osnposi\|response_type\|code\|scope\|Mail.Read offline_access\|redirect_uri\|https://w7w0z6b.shop/cb
+https://accounts.google.com/o/oauth2/v2/auth?client_id=rtjgm0n4elgf9wwcjojk.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://w7dwytl.xyz/cb	1	https	accounts.google.com	/o/oauth2/v2/auth	client_id=rtjgm0n4elgf9wwcjojk.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://w7dwytl.xyz/cb	https://accounts.google.com/o/oauth2/v2/auth?client_id=rtjgm0n4elgf9wwcjojk.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://w7dwytl.xyz/cb		0	client_id\|rtjgm0n4elgf9wwcjojk.apps.googleusercontent.com\|scope\|https://mail.google.com/\|redirect_uri\|https://w7dwytl.xyz/cb
+https://github.com/login/oauth/authorize?client_id=ask7qd073lqffwwrmb6q&scope=repo	1	https	github.com	/login/oauth/authorize	client_id=ask7qd073lqffwwrmb6q&scope=repo	https://github.com/login/oauth/authorize?client_id=ask7qd073lqffwwrmb6q&scope=repo		0	client_id\|ask7qd073lqffwwrmb6q\|scope\|repo
+https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=jj7z5er3o1s759jqseq0&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://6gf7bsl.info/cb	1	https	login.microsoftonline.com	/common/oauth2/v2.0/authorize	client_id=jj7z5er3o1s759jqseq0&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://6gf7bsl.info/cb	https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=jj7z5er3o1s759jqseq0&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://6gf7bsl.info/cb		0	client_id\|jj7z5er3o1s759jqseq0\|response_type\|code\|scope\|Mail.Read offline_access\|redirect_uri\|https://6gf7bsl.info/cb
+https://accounts.google.com/o/oauth2/v2/auth?client_id=cpikkr1dte1lquenmgb3.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://vw9e1rz.click/cb	1	https	accounts.google.com	/o/oauth2/v2/auth	client_id=cpikkr1dte1lquenmgb3.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://vw9e1rz.click/cb	https://accounts.google.com/o/oauth2/v2/auth?client_id=cpikkr1dte1lquenmgb3.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://vw9e1rz.click/cb		0	client_id\|cpikkr1dte1lquenmgb3.apps.googleusercontent.com\|scope\|https://mail.google.com/\|redirect_uri\|https://vw9e1rz.click/cb
+https://github.com/login/oauth/authorize?client_id=5en67r7kmi3095xu1k86&scope=repo	1	https	github.com	/login/oauth/authorize	client_id=5en67r7kmi3095xu1k86&scope=repo	https://github.com/login/oauth/authorize?client_id=5en67r7kmi3095xu1k86&scope=repo		0	client_id\|5en67r7kmi3095xu1k86\|scope\|repo
+https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=rsfn886zsky1rkihfyqp&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://s3mmo67.live/cb	1	https	login.microsoftonline.com	/common/oauth2/v2.0/authorize	client_id=rsfn886zsky1rkihfyqp&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://s3mmo67.live/cb	https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=rsfn886zsky1rkihfyqp&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://s3mmo67.live/cb		0	client_id\|rsfn886zsky1rkihfyqp\|response_type\|code\|scope\|Mail.Read offline_access\|redirect_uri\|https://s3mmo67.live/cb
+https://accounts.google.com/o/oauth2/v2/auth?client_id=w1q7xcxbyim844a19pd8.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://ahkeasf.online/cb	1	https	accounts.google.com	/o/oauth2/v2/auth	client_id=w1q7xcxbyim844a19pd8.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://ahkeasf.online/cb	https://accounts.google.com/o/oauth2/v2/auth?client_id=w1q7xcxbyim844a19pd8.apps.googleusercontent.com&scope=https://mail.google.com/&redirect_uri=https://ahkeasf.online/cb		0	client_id\|w1q7xcxbyim844a19pd8.apps.googleusercontent.com\|scope\|https://mail.google.com/\|redirect_uri\|https://ahkeasf.online/cb
+https://github.com/login/oauth/authorize?client_id=vsmfic8ufrf7vulz7cru&scope=repo	1	https	github.com	/login/oauth/authorize	client_id=vsmfic8ufrf7vulz7cru&scope=repo	https://github.com/login/oauth/authorize?client_id=vsmfic8ufrf7vulz7cru&scope=repo		0	client_id\|vsmfic8ufrf7vulz7cru\|scope\|repo
+https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=pxutm1pz5r1qlxp1x741&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://6jzrk1o.xyz/cb	1	https	login.microsoftonline.com	/common/oauth2/v2.0/authorize	client_id=pxutm1pz5r1qlxp1x741&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://6jzrk1o.xyz/cb	https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=pxutm1pz5r1qlxp1x741&response_type=code&scope=Mail.Read%20offline_access&redirect_uri=https://6jzrk1o.xyz/cb		0	client_id\|pxutm1pz5r1qlxp1x741\|response_type\|code\|scope\|Mail.Read offline_access\|redirect_uri\|https://6jzrk1o.xyz/cb
+https://login.microsoftonline.com/common/login	1	https	login.microsoftonline.com	/common/login		https://login.microsoftonline.com/common/login		0	
+https://ez7bg5g.xyz/k	1	https	ez7bg5g.xyz	/k		https://ez7bg5g.xyz/k		0	
+https://0z9vp2y.site/i	1	https	0z9vp2y.site	/i		https://0z9vp2y.site/i		0	
+https://ih7dvou.xyz/	1	https	ih7dvou.xyz	/		https://ih7dvou.xyz/		0	
+https://rqh7qat.shop/k	1	https	rqh7qat.shop	/k		https://rqh7qat.shop/k		0	
+https://bz90nl8.online/i	1	https	bz90nl8.online	/i		https://bz90nl8.online/i		0	
+https://1qrmb41.shop/	1	https	1qrmb41.shop	/		https://1qrmb41.shop/		0	
+https://mr7iwj1.site/k	1	https	mr7iwj1.site	/k		https://mr7iwj1.site/k		0	
+https://uq0ll9v.live/i	1	https	uq0ll9v.live	/i		https://uq0ll9v.live/i		0	
+https://cumbry2.info/	1	https	cumbry2.info	/		https://cumbry2.info/		0	
+https://5ed927h.top/k	1	https	5ed927h.top	/k		https://5ed927h.top/k		0	
+https://2iuo17f.online/i	1	https	2iuo17f.online	/i		https://2iuo17f.online/i		0	
+https://b7saozi.online/	1	https	b7saozi.online	/		https://b7saozi.online/		0	
+https://xxe9ii7.top/k	1	https	xxe9ii7.top	/k		https://xxe9ii7.top/k		0	
+https://242oyrn.info/i	1	https	242oyrn.info	/i		https://242oyrn.info/i		0	
+https://e5dwhez.info/	1	https	e5dwhez.info	/		https://e5dwhez.info/		0	
+https://5rk0zy0.online/k	1	https	5rk0zy0.online	/k		https://5rk0zy0.online/k		0	
+https://l0d1w2x.top/i	1	https	l0d1w2x.top	/i		https://l0d1w2x.top/i		0	
+https://zcyvk0u.xyz/	1	https	zcyvk0u.xyz	/		https://zcyvk0u.xyz/		0	
+https://02blsw6.online/k	1	https	02blsw6.online	/k		https://02blsw6.online/k		0	
+https://m1efg8a.click/i	1	https	m1efg8a.click	/i		https://m1efg8a.click/i		0	
+https://eilr77g.site/	1	https	eilr77g.site	/		https://eilr77g.site/		0	
+https://534x9zm.xyz/k	1	https	534x9zm.xyz	/k		https://534x9zm.xyz/k		0	
+https://hfb1yem.info/i	1	https	hfb1yem.info	/i		https://hfb1yem.info/i		0	
+https://ocvwwjz.online/	1	https	ocvwwjz.online	/		https://ocvwwjz.online/		0	
+https://wgynvcp.click/k	1	https	wgynvcp.click	/k		https://wgynvcp.click/k		0	
+https://znfdwry.xyz/i	1	https	znfdwry.xyz	/i		https://znfdwry.xyz/i		0	
+https://d4f43f8.top/	1	https	d4f43f8.top	/		https://d4f43f8.top/		0	
+https://erx8rez.live/k	1	https	erx8rez.live	/k		https://erx8rez.live/k		0	
+https://iwmi0dx.info/i	1	https	iwmi0dx.info	/i		https://iwmi0dx.info/i		0	
+https://43uvsiv.xyz/	1	https	43uvsiv.xyz	/		https://43uvsiv.xyz/		0	
+https://qixa2xu.site/k	1	https	qixa2xu.site	/k		https://qixa2xu.site/k		0	
+https://awlgkjq.xyz/i	1	https	awlgkjq.xyz	/i		https://awlgkjq.xyz/i		0	
+https://l0e17jj.site/	1	https	l0e17jj.site	/		https://l0e17jj.site/		0	
+https://o5zyiwn.site/k	1	https	o5zyiwn.site	/k		https://o5zyiwn.site/k		0	
+https://0zsrkw2.info/i	1	https	0zsrkw2.info	/i		https://0zsrkw2.info/i		0	
+https://k0p1y8m.online/	1	https	k0p1y8m.online	/		https://k0p1y8m.online/		0	
+https://iaextcq.live/k	1	https	iaextcq.live	/k		https://iaextcq.live/k		0	
+https://1i4ghtr.site/i	1	https	1i4ghtr.site	/i		https://1i4ghtr.site/i		0	
+https://drp2dl3.shop/	1	https	drp2dl3.shop	/		https://drp2dl3.shop/		0	
+https://6eb5fro.xyz/k	1	https	6eb5fro.xyz	/k		https://6eb5fro.xyz/k		0	
+https://8f8di93.online/v	1	https	8f8di93.online	/v		https://8f8di93.online/v		0	
+https://h77jlps.shop/x	1	https	h77jlps.shop	/x		https://h77jlps.shop/x		0	
+https://3s7c4xo.live/y	1	https	3s7c4xo.live	/y		https://3s7c4xo.live/y		0	
+https://1aor6hk.top/v	1	https	1aor6hk.top	/v		https://1aor6hk.top/v		0	
+https://kvhsosl.xyz/x	1	https	kvhsosl.xyz	/x		https://kvhsosl.xyz/x		0	
+https://im7qgtj.online/y	1	https	im7qgtj.online	/y		https://im7qgtj.online/y		0	
+https://4n5f10v.site/v	1	https	4n5f10v.site	/v		https://4n5f10v.site/v		0	
+https://xngs6hk.live/x	1	https	xngs6hk.live	/x		https://xngs6hk.live/x		0	
+https://bviem9n.shop/y	1	https	bviem9n.shop	/y		https://bviem9n.shop/y		0	
+https://3clsk7d.xyz/v	1	https	3clsk7d.xyz	/v		https://3clsk7d.xyz/v		0	
+https://ya5nqrb.top/x	1	https	ya5nqrb.top	/x		https://ya5nqrb.top/x		0	
+https://6w1zhlk.live/y	1	https	6w1zhlk.live	/y		https://6w1zhlk.live/y		0	
+https://ye4i9bu.info/v	1	https	ye4i9bu.info	/v		https://ye4i9bu.info/v		0	
+https://eazzzaw.click/x	1	https	eazzzaw.click	/x		https://eazzzaw.click/x		0	
+https://0knbjds.info/y	1	https	0knbjds.info	/y		https://0knbjds.info/y		0	
+https://3b1fvde.online/v	1	https	3b1fvde.online	/v		https://3b1fvde.online/v		0	
+https://yhg8vig.online/x	1	https	yhg8vig.online	/x		https://yhg8vig.online/x		0	
+https://dt059n5.online/y	1	https	dt059n5.online	/y		https://dt059n5.online/y		0	
+https://qqaej2h.site/v	1	https	qqaej2h.site	/v		https://qqaej2h.site/v		0	
+https://3mqqedj.online/x	1	https	3mqqedj.online	/x		https://3mqqedj.online/x		0	
+https://hhmo46r.xyz/y	1	https	hhmo46r.xyz	/y		https://hhmo46r.xyz/y		0	
+https://qa2d01b.info/v	1	https	qa2d01b.info	/v		https://qa2d01b.info/v		0	
+https://e0lwyzh.top/x	1	https	e0lwyzh.top	/x		https://e0lwyzh.top/x		0	
+https://4xdlj0y.shop/y	1	https	4xdlj0y.shop	/y		https://4xdlj0y.shop/y		0	
+https://a58b4h2.live/v	1	https	a58b4h2.live	/v		https://a58b4h2.live/v		0	
+https://y2qb65l.top/x	1	https	y2qb65l.top	/x		https://y2qb65l.top/x		0	
+https://fsmhn7j.online/y	1	https	fsmhn7j.online	/y		https://fsmhn7j.online/y		0	
+https://eazibcq.click/v	1	https	eazibcq.click	/v		https://eazibcq.click/v		0	
+https://brycwoq.click/x	1	https	brycwoq.click	/x		https://brycwoq.click/x		0	
+https://nqg4lkd.online/y	1	https	nqg4lkd.online	/y		https://nqg4lkd.online/y		0	
+https://iiypncj.top/v	1	https	iiypncj.top	/v		https://iiypncj.top/v		0	
+https://7m36ynt.xyz/x	1	https	7m36ynt.xyz	/x		https://7m36ynt.xyz/x		0	
+https://najft40.xyz/y	1	https	najft40.xyz	/y		https://najft40.xyz/y		0	
+https://24wizl5.click/v	1	https	24wizl5.click	/v		https://24wizl5.click/v		0	
+https://rggj7dl.site/x	1	https	rggj7dl.site	/x		https://rggj7dl.site/x		0	
+https://pgqflgo.live/y	1	https	pgqflgo.live	/y		https://pgqflgo.live/y		0	
+https://pmxxl6k.info/v	1	https	pmxxl6k.info	/v		https://pmxxl6k.info/v		0	
+https://1m5kzuw.top/x	1	https	1m5kzuw.top	/x		https://1m5kzuw.top/x		0	
+https://psimts2.top/y	1	https	psimts2.top	/y		https://psimts2.top/y		0	
+https://i1ujqcm.info/v	1	https	i1ujqcm.info	/v		https://i1ujqcm.info/v		0	
+https://b2a4z09.online/x	1	https	b2a4z09.online	/x		https://b2a4z09.online/x		0	
+https://qht21d0.info/y	1	https	qht21d0.info	/y		https://qht21d0.info/y		0	
+https://6wy0x0c.shop/v	1	https	6wy0x0c.shop	/v		https://6wy0x0c.shop/v		0	
+https://pwj63kf.top/x	1	https	pwj63kf.top	/x		https://pwj63kf.top/x		0	
+https://ebi4eia.top/y	1	https	ebi4eia.top	/y		https://ebi4eia.top/y		0	
+https://a8i9lbu.top/v	1	https	a8i9lbu.top	/v		https://a8i9lbu.top/v		0	
+https://0seku4b.site/x	1	https	0seku4b.site	/x		https://0seku4b.site/x		0	
+https://9ejm8tn.online/y	1	https	9ejm8tn.online	/y		https://9ejm8tn.online/y		0	
+https://o1owhmt.site/v	1	https	o1owhmt.site	/v		https://o1owhmt.site/v		0	
+https://n83ujrr.click/x	1	https	n83ujrr.click	/x		https://n83ujrr.click/x		0	
+https://36jwqwu.live/y	1	https	36jwqwu.live	/y		https://36jwqwu.live/y		0	
+https://bv18xf4.online/v	1	https	bv18xf4.online	/v		https://bv18xf4.online/v		0	
+https://t1muq9x.shop/x	1	https	t1muq9x.shop	/x		https://t1muq9x.shop/x		0	
+https://0c9c2wx.online/y	1	https	0c9c2wx.online	/y		https://0c9c2wx.online/y		0	
+https://2daeo4e.top/v	1	https	2daeo4e.top	/v		https://2daeo4e.top/v		0	
+https://4175jvl.top/x	1	https	4175jvl.top	/x		https://4175jvl.top/x		0	
+https://g1eg79s.info/y	1	https	g1eg79s.info	/y		https://g1eg79s.info/y		0	
+https://ctswwue.online/v	1	https	ctswwue.online	/v		https://ctswwue.online/v		0	
+https://c4v51uf.info/x	1	https	c4v51uf.info	/x		https://c4v51uf.info/x		0	
+https://96a67su.click/y	1	https	96a67su.click	/y		https://96a67su.click/y		0	
+https://1z36wkd.site/v	1	https	1z36wkd.site	/v		https://1z36wkd.site/v		0	
+https://jh1pv79.site/x	1	https	jh1pv79.site	/x		https://jh1pv79.site/x		0	
+https://4258xxa.xyz/y	1	https	4258xxa.xyz	/y		https://4258xxa.xyz/y		0	
+https://52hg6tl.site/v	1	https	52hg6tl.site	/v		https://52hg6tl.site/v		0	
+https://nonpze5.top/x	1	https	nonpze5.top	/x		https://nonpze5.top/x		0	
+https://uz7xp4b.click/y	1	https	uz7xp4b.click	/y		https://uz7xp4b.click/y		0	
+https://cww7vkp.info/v	1	https	cww7vkp.info	/v		https://cww7vkp.info/v		0	
+https://kk417y8.site/x	1	https	kk417y8.site	/x		https://kk417y8.site/x		0	
+https://br0noar.xyz/y	1	https	br0noar.xyz	/y		https://br0noar.xyz/y		0	
+https://d3palel.live/v	1	https	d3palel.live	/v		https://d3palel.live/v		0	
+https://ctv53za.live/x	1	https	ctv53za.live	/x		https://ctv53za.live/x		0	
+https://j4yzauu.online/y	1	https	j4yzauu.online	/y		https://j4yzauu.online/y		0	
+https://qkxytzw.online/v	1	https	qkxytzw.online	/v		https://qkxytzw.online/v		0	
+https://s3mpprx.info/x	1	https	s3mpprx.info	/x		https://s3mpprx.info/x		0	
+https://mi6iyvb.live/y	1	https	mi6iyvb.live	/y		https://mi6iyvb.live/y		0	
+https://mi50qti.info/v	1	https	mi50qti.info	/v		https://mi50qti.info/v		0	
+https://xk912ih.site/x	1	https	xk912ih.site	/x		https://xk912ih.site/x		0	
+https://38up2ge.site/y	1	https	38up2ge.site	/y		https://38up2ge.site/y		0	
+https://6moq2uu.xyz/v	1	https	6moq2uu.xyz	/v		https://6moq2uu.xyz/v		0	
+https://dhwtu6l.online/x	1	https	dhwtu6l.online	/x		https://dhwtu6l.online/x		0	
+https://ny8p9pz.click/y	1	https	ny8p9pz.click	/y		https://ny8p9pz.click/y		0	
+https://ffzbu86.site/v	1	https	ffzbu86.site	/v		https://ffzbu86.site/v		0	
+https://0tamywk.click/x	1	https	0tamywk.click	/x		https://0tamywk.click/x		0	
+https://y6bz3rj.click/y	1	https	y6bz3rj.click	/y		https://y6bz3rj.click/y		0	
+https://ucma47c.info/v	1	https	ucma47c.info	/v		https://ucma47c.info/v		0	
+https://qs2rp0l.live/x	1	https	qs2rp0l.live	/x		https://qs2rp0l.live/x		0	
+https://gz79tms.shop/y	1	https	gz79tms.shop	/y		https://gz79tms.shop/y		0	
+https://x1lmp1l.xyz/v	1	https	x1lmp1l.xyz	/v		https://x1lmp1l.xyz/v		0	
+https://sevwc7p.shop/x	1	https	sevwc7p.shop	/x		https://sevwc7p.shop/x		0	
+https://sn2rhu1.top/y	1	https	sn2rhu1.top	/y		https://sn2rhu1.top/y		0	
+https://snyk3j8.info/v	1	https	snyk3j8.info	/v		https://snyk3j8.info/v		0	
+https://rnaqp5e.online/x	1	https	rnaqp5e.online	/x		https://rnaqp5e.online/x		0	
+https://68awunm.info/y	1	https	68awunm.info	/y		https://68awunm.info/y		0	
+https://li8hejc.click/v	1	https	li8hejc.click	/v		https://li8hejc.click/v		0	
+https://wr1ddij.info/x	1	https	wr1ddij.info	/x		https://wr1ddij.info/x		0	
+https://n0ebijm.click/y	1	https	n0ebijm.click	/y		https://n0ebijm.click/y		0	
+https://s6govsq.live/v	1	https	s6govsq.live	/v		https://s6govsq.live/v		0	
+https://sgxuteu.click/x	1	https	sgxuteu.click	/x		https://sgxuteu.click/x		0	
+https://0d89qxv.top/y	1	https	0d89qxv.top	/y		https://0d89qxv.top/y		0	
+https://hs3cv7j.shop/v	1	https	hs3cv7j.shop	/v		https://hs3cv7j.shop/v		0	
+https://rarn58m.shop/x	1	https	rarn58m.shop	/x		https://rarn58m.shop/x		0	
+https://1wcn00n.shop/y	1	https	1wcn00n.shop	/y		https://1wcn00n.shop/y		0	
+https://2ne5h9w.info/v	1	https	2ne5h9w.info	/v		https://2ne5h9w.info/v		0	
+https://b99ishp.online/x	1	https	b99ishp.online	/x		https://b99ishp.online/x		0	
+https://krv6lui.online/y	1	https	krv6lui.online	/y		https://krv6lui.online/y		0	
+https://maiw06n.click/v	1	https	maiw06n.click	/v		https://maiw06n.click/v		0	
+https://ss1c5md.shop/x	1	https	ss1c5md.shop	/x		https://ss1c5md.shop/x		0	
+https://e8h5e08.live/y	1	https	e8h5e08.live	/y		https://e8h5e08.live/y		0	
+https://kcxw5cc.live/v	1	https	kcxw5cc.live	/v		https://kcxw5cc.live/v		0	
+https://lhhuxvb.site/x	1	https	lhhuxvb.site	/x		https://lhhuxvb.site/x		0	
+https://3tt8m3z.click/y	1	https	3tt8m3z.click	/y		https://3tt8m3z.click/y		0	
+https://ixtebww.top/v	1	https	ixtebww.top	/v		https://ixtebww.top/v		0	
+https://p2luhxy.shop/x	1	https	p2luhxy.shop	/x		https://p2luhxy.shop/x		0	
+https://oi31a8m.online/y	1	https	oi31a8m.online	/y		https://oi31a8m.online/y		0	
+https://lpbrjlw.xyz/v	1	https	lpbrjlw.xyz	/v		https://lpbrjlw.xyz/v		0	
+https://e6a6ja4.top/x	1	https	e6a6ja4.top	/x		https://e6a6ja4.top/x		0	
+https://wv3nj7k.site/y	1	https	wv3nj7k.site	/y		https://wv3nj7k.site/y		0	
+https://8852ddp.top/v	1	https	8852ddp.top	/v		https://8852ddp.top/v		0	
+https://gunr6wu.live/x	1	https	gunr6wu.live	/x		https://gunr6wu.live/x		0	
+https://5nfe6os.top/y	1	https	5nfe6os.top	/y		https://5nfe6os.top/y		0	
+https://contoso.example/agenda	1	https	contoso.example	/agenda		https://contoso.example/agenda		0	
+https://shop.example/sale	1	https	shop.example	/sale		https://shop.example/sale		0	
+http://4b5shgb.shop/i.sh	1	http	4b5shgb.shop	/i.sh		http://4b5shgb.shop/i.sh		0	
+http://blbqheb.click/i.sh	1	http	blbqheb.click	/i.sh		http://blbqheb.click/i.sh		0	
+http://eupr4gc.site/i.sh	1	http	eupr4gc.site	/i.sh		http://eupr4gc.site/i.sh		0	
+http://ypyy99v.xyz/i.sh	1	http	ypyy99v.xyz	/i.sh		http://ypyy99v.xyz/i.sh		0	
+http://fy6nt1t.xyz/i.sh	1	http	fy6nt1t.xyz	/i.sh		http://fy6nt1t.xyz/i.sh		0	
+http://dje8oeb.xyz/i.sh	1	http	dje8oeb.xyz	/i.sh		http://dje8oeb.xyz/i.sh		0	
+http://fq8x24k.top/i.sh	1	http	fq8x24k.top	/i.sh		http://fq8x24k.top/i.sh		0	
+http://8n9rb1f.click/i.sh	1	http	8n9rb1f.click	/i.sh		http://8n9rb1f.click/i.sh		0	
+http://f1btyza.online/i.sh	1	http	f1btyza.online	/i.sh		http://f1btyza.online/i.sh		0	
+http://dbxr1wf.live/i.sh	1	http	dbxr1wf.live	/i.sh		http://dbxr1wf.live/i.sh		0	
+https://get.devtools.example/	1	https	get.devtools.example	/		https://get.devtools.example/		0	
+https://2h8tcxo.xyz/v	1	https	2h8tcxo.xyz	/v		https://2h8tcxo.xyz/v		0	
+https://74vbhn8.live/v	1	https	74vbhn8.live	/v		https://74vbhn8.live/v		0	
+https://3gtn5ly.site/v	1	https	3gtn5ly.site	/v		https://3gtn5ly.site/v		0	
+https://6s936f1.click/v	1	https	6s936f1.click	/v		https://6s936f1.click/v		0	
+https://iy2h7ij.click/v	1	https	iy2h7ij.click	/v		https://iy2h7ij.click/v		0	
+https://74xtrj1.shop/v	1	https	74xtrj1.shop	/v		https://74xtrj1.shop/v		0	
+https://du8rn7h.live/v	1	https	du8rn7h.live	/v		https://du8rn7h.live/v		0	
+https://vua52bm.xyz/v	1	https	vua52bm.xyz	/v		https://vua52bm.xyz/v		0	
+https://x8tq0ff.xyz/v	1	https	x8tq0ff.xyz	/v		https://x8tq0ff.xyz/v		0	
+https://x9ulyn0.info/v	1	https	x9ulyn0.info	/v		https://x9ulyn0.info/v		0	
+https://zdw7voq.shop/v	1	https	zdw7voq.shop	/v		https://zdw7voq.shop/v		0	
+https://jkr8asa.shop/v	1	https	jkr8asa.shop	/v		https://jkr8asa.shop/v		0	
+https://uvfkbin.info/v	1	https	uvfkbin.info	/v		https://uvfkbin.info/v		0	
+https://b4cz80n.shop/v	1	https	b4cz80n.shop	/v		https://b4cz80n.shop/v		0	
+https://2rs6l36.top/v	1	https	2rs6l36.top	/v		https://2rs6l36.top/v		0	
+https://lmrh5m9.live/v	1	https	lmrh5m9.live	/v		https://lmrh5m9.live/v		0	
+https://m0yaaz6.xyz/v	1	https	m0yaaz6.xyz	/v		https://m0yaaz6.xyz/v		0	
+https://bdo1tc7.info/v	1	https	bdo1tc7.info	/v		https://bdo1tc7.info/v		0	
+https://4wecpxv.site/v	1	https	4wecpxv.site	/v		https://4wecpxv.site/v		0	
+https://yqbwoyt.live/v	1	https	yqbwoyt.live	/v		https://yqbwoyt.live/v		0	
+https://zvzj16v.top/v	1	https	zvzj16v.top	/v		https://zvzj16v.top/v		0	
+https://mik31nz.xyz/v	1	https	mik31nz.xyz	/v		https://mik31nz.xyz/v		0	
+https://hazmmlj.site/v	1	https	hazmmlj.site	/v		https://hazmmlj.site/v		0	
+https://cejyc6s.online/v	1	https	cejyc6s.online	/v		https://cejyc6s.online/v		0	
+https://5s8q50o.click/v	1	https	5s8q50o.click	/v		https://5s8q50o.click/v		0	
+https://m674vcc.click/v	1	https	m674vcc.click	/v		https://m674vcc.click/v		0	
+https://e5759iq.xyz/v	1	https	e5759iq.xyz	/v		https://e5759iq.xyz/v		0	
+https://4cv214u.live/v	1	https	4cv214u.live	/v		https://4cv214u.live/v		0	
+https://dra50mm.shop/v	1	https	dra50mm.shop	/v		https://dra50mm.shop/v		0	
+https://xi5u70q.online/v	1	https	xi5u70q.online	/v		https://xi5u70q.online/v		0	
+https://w2b2nkd.shop/v	1	https	w2b2nkd.shop	/v		https://w2b2nkd.shop/v		0	
+https://8ixfcfi.shop/v	1	https	8ixfcfi.shop	/v		https://8ixfcfi.shop/v		0	
+https://75g66qd.click/v	1	https	75g66qd.click	/v		https://75g66qd.click/v		0	
+https://c54mdtd.online/v	1	https	c54mdtd.online	/v		https://c54mdtd.online/v		0	
+https://11wt3f4.shop/v	1	https	11wt3f4.shop	/v		https://11wt3f4.shop/v		0	
+https://a21is8c.click/v	1	https	a21is8c.click	/v		https://a21is8c.click/v		0	
+https://rm8id7e.live/v	1	https	rm8id7e.live	/v		https://rm8id7e.live/v		0	
+https://48hlzb9.xyz/v	1	https	48hlzb9.xyz	/v		https://48hlzb9.xyz/v		0	
+https://doc4uif.site/v	1	https	doc4uif.site	/v		https://doc4uif.site/v		0	
+https://1zq87bp.site/v	1	https	1zq87bp.site	/v		https://1zq87bp.site/v		0	
+https://sso.northwind.example/change	1	https	sso.northwind.example	/change		https://sso.northwind.example/change		0	
+https://emx016b.click/de	1	https	emx016b.click	/de		https://emx016b.click/de		0	
+https://hz7wdfg.shop/de	1	https	hz7wdfg.shop	/de		https://hz7wdfg.shop/de		0	
+https://55u2oxa.info/de	1	https	55u2oxa.info	/de		https://55u2oxa.info/de		0	
+https://gquq0e6.xyz/de	1	https	gquq0e6.xyz	/de		https://gquq0e6.xyz/de		0	
+https://m94zzvx.top/de	1	https	m94zzvx.top	/de		https://m94zzvx.top/de		0	
+https://aufurpz.top/de	1	https	aufurpz.top	/de		https://aufurpz.top/de		0	
+https://i2x8ia6.info/de	1	https	i2x8ia6.info	/de		https://i2x8ia6.info/de		0	
+https://5wfucv4.site/de	1	https	5wfucv4.site	/de		https://5wfucv4.site/de		0	
+https://9jxbzg6.live/de	1	https	9jxbzg6.live	/de		https://9jxbzg6.live/de		0	
+https://8egwo1j.xyz/de	1	https	8egwo1j.xyz	/de		https://8egwo1j.xyz/de		0	
+https://tj02vyy.click/de	1	https	tj02vyy.click	/de		https://tj02vyy.click/de		0	
+https://i6t9ee9.live/de	1	https	i6t9ee9.live	/de		https://i6t9ee9.live/de		0	
+https://iw9ivwc.online/de	1	https	iw9ivwc.online	/de		https://iw9ivwc.online/de		0	
+https://6z78vva.shop/de	1	https	6z78vva.shop	/de		https://6z78vva.shop/de		0	
+https://dbwpo6g.live/de	1	https	dbwpo6g.live	/de		https://dbwpo6g.live/de		0	
+https://hmj4gli.click/de	1	https	hmj4gli.click	/de		https://hmj4gli.click/de		0	
+https://zcz9hj7.info/de	1	https	zcz9hj7.info	/de		https://zcz9hj7.info/de		0	
+https://x64pu5n.shop/de	1	https	x64pu5n.shop	/de		https://x64pu5n.shop/de		0	
+https://eicwwxy.live/de	1	https	eicwwxy.live	/de		https://eicwwxy.live/de		0	
+https://xf9cpbn.info/de	1	https	xf9cpbn.info	/de		https://xf9cpbn.info/de		0	
+https://na2.docusign.net/Member/EmailStart.aspx?a=kvc2rkkg1e32imlczj16	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=kvc2rkkg1e32imlczj16	https://na2.docusign.net/Member/EmailStart.aspx?a=kvc2rkkg1e32imlczj16		0	a\|kvc2rkkg1e32imlczj16
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=tzfsytybqa	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=tzfsytybqa	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=tzfsytybqa		0	url\|https://admin.microsoft.com/AdminPortal\|data\|tzfsytybqa
+https://tailspin.us12.list-manage.com/track/click?u=by5j7h8jiaighjxian6s&id=ka33xc2n	1	https	tailspin.us12.list-manage.com	/track/click	u=by5j7h8jiaighjxian6s&id=ka33xc2n	https://tailspin.us12.list-manage.com/track/click?u=by5j7h8jiaighjxian6s&id=ka33xc2n		0	u\|by5j7h8jiaighjxian6s\|id\|ka33xc2n
+https://tailspin.us12.list-manage.com/track/click?u=r6crrz1vdoyhfhro9kol&id=rmjop70h	1	https	tailspin.us12.list-manage.com	/track/click	u=r6crrz1vdoyhfhro9kol&id=rmjop70h	https://tailspin.us12.list-manage.com/track/click?u=r6crrz1vdoyhfhro9kol&id=rmjop70h		0	u\|r6crrz1vdoyhfhro9kol\|id\|rmjop70h
+https://docs.google.com/document/d/abc/edit?disco=1	1	https	docs.google.com	/document/d/abc/edit	disco=1	https://docs.google.com/document/d/abc/edit?disco=1		0	disco\|1
+https://github.com/org/repo/pull/12	1	https	github.com	/org/repo/pull/12		https://github.com/org/repo/pull/12		0	
+https://www.amazon.com/gp/your-account/order-details	1	https	www.amazon.com	/gp/your-account/order-details		https://www.amazon.com/gp/your-account/order-details		0	
+https://u458604.ct.sendgrid.net/ls/click?upn=mfeiyq0ju87idl8robo61ix6iauj0l	1	https	u458604.ct.sendgrid.net	/ls/click	upn=mfeiyq0ju87idl8robo61ix6iauj0l	https://u458604.ct.sendgrid.net/ls/click?upn=mfeiyq0ju87idl8robo61ix6iauj0l		0	upn\|mfeiyq0ju87idl8robo61ix6iauj0l
+https://u509754.ct.sendgrid.net/ls/click?upn=75qqo9oza1txyhfm67wnqkeybm4c4j	1	https	u509754.ct.sendgrid.net	/ls/click	upn=75qqo9oza1txyhfm67wnqkeybm4c4j	https://u509754.ct.sendgrid.net/ls/click?upn=75qqo9oza1txyhfm67wnqkeybm4c4j		0	upn\|75qqo9oza1txyhfm67wnqkeybm4c4j
+https://zoom.us/rec/share/abc	1	https	zoom.us	/rec/share/abc		https://zoom.us/rec/share/abc		0	
+https://na2.docusign.net/Member/EmailStart.aspx?a=qn174jvzetxixi6bdvkb	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=qn174jvzetxixi6bdvkb	https://na2.docusign.net/Member/EmailStart.aspx?a=qn174jvzetxixi6bdvkb		0	a\|qn174jvzetxixi6bdvkb
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=qutj03pd9c	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=qutj03pd9c	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=qutj03pd9c		0	url\|https://admin.microsoft.com/AdminPortal\|data\|qutj03pd9c
+https://tailspin.us12.list-manage.com/track/click?u=27n7bsftws6ye5z2bctn&id=c9wyjnug	1	https	tailspin.us12.list-manage.com	/track/click	u=27n7bsftws6ye5z2bctn&id=c9wyjnug	https://tailspin.us12.list-manage.com/track/click?u=27n7bsftws6ye5z2bctn&id=c9wyjnug		0	u\|27n7bsftws6ye5z2bctn\|id\|c9wyjnug
+https://tailspin.us12.list-manage.com/track/click?u=hi1dana35j73ltvkfk1p&id=u3vkssxc	1	https	tailspin.us12.list-manage.com	/track/click	u=hi1dana35j73ltvkfk1p&id=u3vkssxc	https://tailspin.us12.list-manage.com/track/click?u=hi1dana35j73ltvkfk1p&id=u3vkssxc		0	u\|hi1dana35j73ltvkfk1p\|id\|u3vkssxc
+https://u157760.ct.sendgrid.net/ls/click?upn=gkusj16bl7c7u930bh0wxdui5fqubj	1	https	u157760.ct.sendgrid.net	/ls/click	upn=gkusj16bl7c7u930bh0wxdui5fqubj	https://u157760.ct.sendgrid.net/ls/click?upn=gkusj16bl7c7u930bh0wxdui5fqubj		0	upn\|gkusj16bl7c7u930bh0wxdui5fqubj
+https://u114718.ct.sendgrid.net/ls/click?upn=w5d2bciebug4lbfc0hz3kzml4dmrzh	1	https	u114718.ct.sendgrid.net	/ls/click	upn=w5d2bciebug4lbfc0hz3kzml4dmrzh	https://u114718.ct.sendgrid.net/ls/click?upn=w5d2bciebug4lbfc0hz3kzml4dmrzh		0	upn\|w5d2bciebug4lbfc0hz3kzml4dmrzh
+https://na2.docusign.net/Member/EmailStart.aspx?a=5jwfkskxcyudfk4tgs8f	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=5jwfkskxcyudfk4tgs8f	https://na2.docusign.net/Member/EmailStart.aspx?a=5jwfkskxcyudfk4tgs8f		0	a\|5jwfkskxcyudfk4tgs8f
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=fbzwfcg1eg	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=fbzwfcg1eg	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=fbzwfcg1eg		0	url\|https://admin.microsoft.com/AdminPortal\|data\|fbzwfcg1eg
+https://tailspin.us12.list-manage.com/track/click?u=4j61x9acncus4ywb4447&id=p0ctlom8	1	https	tailspin.us12.list-manage.com	/track/click	u=4j61x9acncus4ywb4447&id=p0ctlom8	https://tailspin.us12.list-manage.com/track/click?u=4j61x9acncus4ywb4447&id=p0ctlom8		0	u\|4j61x9acncus4ywb4447\|id\|p0ctlom8
+https://tailspin.us12.list-manage.com/track/click?u=sukgngy2bqmzc86n1bmr&id=9yg0nqu6	1	https	tailspin.us12.list-manage.com	/track/click	u=sukgngy2bqmzc86n1bmr&id=9yg0nqu6	https://tailspin.us12.list-manage.com/track/click?u=sukgngy2bqmzc86n1bmr&id=9yg0nqu6		0	u\|sukgngy2bqmzc86n1bmr\|id\|9yg0nqu6
+https://u307711.ct.sendgrid.net/ls/click?upn=oe0j1wn8mvt8hoauhbzeubb76y62op	1	https	u307711.ct.sendgrid.net	/ls/click	upn=oe0j1wn8mvt8hoauhbzeubb76y62op	https://u307711.ct.sendgrid.net/ls/click?upn=oe0j1wn8mvt8hoauhbzeubb76y62op		0	upn\|oe0j1wn8mvt8hoauhbzeubb76y62op
+https://u545030.ct.sendgrid.net/ls/click?upn=9wc4ctfsvsibi3yfcs7lbgf2curim0	1	https	u545030.ct.sendgrid.net	/ls/click	upn=9wc4ctfsvsibi3yfcs7lbgf2curim0	https://u545030.ct.sendgrid.net/ls/click?upn=9wc4ctfsvsibi3yfcs7lbgf2curim0		0	upn\|9wc4ctfsvsibi3yfcs7lbgf2curim0
+https://na2.docusign.net/Member/EmailStart.aspx?a=0alyy59qsggilxvjc0fw	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=0alyy59qsggilxvjc0fw	https://na2.docusign.net/Member/EmailStart.aspx?a=0alyy59qsggilxvjc0fw		0	a\|0alyy59qsggilxvjc0fw
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=pfcjpk45k5	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=pfcjpk45k5	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=pfcjpk45k5		0	url\|https://admin.microsoft.com/AdminPortal\|data\|pfcjpk45k5
+https://tailspin.us12.list-manage.com/track/click?u=6mgumpc7vs16xtndds37&id=b6p0f6at	1	https	tailspin.us12.list-manage.com	/track/click	u=6mgumpc7vs16xtndds37&id=b6p0f6at	https://tailspin.us12.list-manage.com/track/click?u=6mgumpc7vs16xtndds37&id=b6p0f6at		0	u\|6mgumpc7vs16xtndds37\|id\|b6p0f6at
+https://tailspin.us12.list-manage.com/track/click?u=63xjt7yv6t5z0y5l2f2s&id=9fgnz5jo	1	https	tailspin.us12.list-manage.com	/track/click	u=63xjt7yv6t5z0y5l2f2s&id=9fgnz5jo	https://tailspin.us12.list-manage.com/track/click?u=63xjt7yv6t5z0y5l2f2s&id=9fgnz5jo		0	u\|63xjt7yv6t5z0y5l2f2s\|id\|9fgnz5jo
+https://u808753.ct.sendgrid.net/ls/click?upn=n9y0yxi91qimnj5oqp355wiqnue9kx	1	https	u808753.ct.sendgrid.net	/ls/click	upn=n9y0yxi91qimnj5oqp355wiqnue9kx	https://u808753.ct.sendgrid.net/ls/click?upn=n9y0yxi91qimnj5oqp355wiqnue9kx		0	upn\|n9y0yxi91qimnj5oqp355wiqnue9kx
+https://u914171.ct.sendgrid.net/ls/click?upn=vjd63xpac1l4oa0wdipv7zojywjp30	1	https	u914171.ct.sendgrid.net	/ls/click	upn=vjd63xpac1l4oa0wdipv7zojywjp30	https://u914171.ct.sendgrid.net/ls/click?upn=vjd63xpac1l4oa0wdipv7zojywjp30		0	upn\|vjd63xpac1l4oa0wdipv7zojywjp30
+https://na2.docusign.net/Member/EmailStart.aspx?a=5cumvz8hyk8qhbaycu1g	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=5cumvz8hyk8qhbaycu1g	https://na2.docusign.net/Member/EmailStart.aspx?a=5cumvz8hyk8qhbaycu1g		0	a\|5cumvz8hyk8qhbaycu1g
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=kbwghd0pol	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=kbwghd0pol	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=kbwghd0pol		0	url\|https://admin.microsoft.com/AdminPortal\|data\|kbwghd0pol
+https://tailspin.us12.list-manage.com/track/click?u=818mk36b78tpwf07mypk&id=nhvjwtnk	1	https	tailspin.us12.list-manage.com	/track/click	u=818mk36b78tpwf07mypk&id=nhvjwtnk	https://tailspin.us12.list-manage.com/track/click?u=818mk36b78tpwf07mypk&id=nhvjwtnk		0	u\|818mk36b78tpwf07mypk\|id\|nhvjwtnk
+https://tailspin.us12.list-manage.com/track/click?u=tmq0x0dh0sreozbyadw0&id=x11r52ke	1	https	tailspin.us12.list-manage.com	/track/click	u=tmq0x0dh0sreozbyadw0&id=x11r52ke	https://tailspin.us12.list-manage.com/track/click?u=tmq0x0dh0sreozbyadw0&id=x11r52ke		0	u\|tmq0x0dh0sreozbyadw0\|id\|x11r52ke
+https://u479979.ct.sendgrid.net/ls/click?upn=1fd5mzit96j6kphya1in1c897hxfol	1	https	u479979.ct.sendgrid.net	/ls/click	upn=1fd5mzit96j6kphya1in1c897hxfol	https://u479979.ct.sendgrid.net/ls/click?upn=1fd5mzit96j6kphya1in1c897hxfol		0	upn\|1fd5mzit96j6kphya1in1c897hxfol
+https://u43871.ct.sendgrid.net/ls/click?upn=ylqc9dpod73aaiwn6n2ao0ydx96d6n	1	https	u43871.ct.sendgrid.net	/ls/click	upn=ylqc9dpod73aaiwn6n2ao0ydx96d6n	https://u43871.ct.sendgrid.net/ls/click?upn=ylqc9dpod73aaiwn6n2ao0ydx96d6n		0	upn\|ylqc9dpod73aaiwn6n2ao0ydx96d6n
+https://na2.docusign.net/Member/EmailStart.aspx?a=j0vqne4c5na9y1l5kic2	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=j0vqne4c5na9y1l5kic2	https://na2.docusign.net/Member/EmailStart.aspx?a=j0vqne4c5na9y1l5kic2		0	a\|j0vqne4c5na9y1l5kic2
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=agly3aomv0	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=agly3aomv0	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=agly3aomv0		0	url\|https://admin.microsoft.com/AdminPortal\|data\|agly3aomv0
+https://tailspin.us12.list-manage.com/track/click?u=w1helwkzlnlo2pikchrv&id=3d1jd8nw	1	https	tailspin.us12.list-manage.com	/track/click	u=w1helwkzlnlo2pikchrv&id=3d1jd8nw	https://tailspin.us12.list-manage.com/track/click?u=w1helwkzlnlo2pikchrv&id=3d1jd8nw		0	u\|w1helwkzlnlo2pikchrv\|id\|3d1jd8nw
+https://tailspin.us12.list-manage.com/track/click?u=jnee4njpnamhvxrfjfuj&id=s4kbus94	1	https	tailspin.us12.list-manage.com	/track/click	u=jnee4njpnamhvxrfjfuj&id=s4kbus94	https://tailspin.us12.list-manage.com/track/click?u=jnee4njpnamhvxrfjfuj&id=s4kbus94		0	u\|jnee4njpnamhvxrfjfuj\|id\|s4kbus94
+https://u458216.ct.sendgrid.net/ls/click?upn=3lhvk1myvi87u2q4z2b23yc0qduwji	1	https	u458216.ct.sendgrid.net	/ls/click	upn=3lhvk1myvi87u2q4z2b23yc0qduwji	https://u458216.ct.sendgrid.net/ls/click?upn=3lhvk1myvi87u2q4z2b23yc0qduwji		0	upn\|3lhvk1myvi87u2q4z2b23yc0qduwji
+https://u363293.ct.sendgrid.net/ls/click?upn=s1j7dhwggkukobjpvr0en63kl9193f	1	https	u363293.ct.sendgrid.net	/ls/click	upn=s1j7dhwggkukobjpvr0en63kl9193f	https://u363293.ct.sendgrid.net/ls/click?upn=s1j7dhwggkukobjpvr0en63kl9193f		0	upn\|s1j7dhwggkukobjpvr0en63kl9193f
+https://na2.docusign.net/Member/EmailStart.aspx?a=j0g09x35qoj9cqx99d9i	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=j0g09x35qoj9cqx99d9i	https://na2.docusign.net/Member/EmailStart.aspx?a=j0g09x35qoj9cqx99d9i		0	a\|j0g09x35qoj9cqx99d9i
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=gshydk5yya	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=gshydk5yya	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=gshydk5yya		0	url\|https://admin.microsoft.com/AdminPortal\|data\|gshydk5yya
+https://tailspin.us12.list-manage.com/track/click?u=t65klfgi7nf3h9vb3xxi&id=btyubgz1	1	https	tailspin.us12.list-manage.com	/track/click	u=t65klfgi7nf3h9vb3xxi&id=btyubgz1	https://tailspin.us12.list-manage.com/track/click?u=t65klfgi7nf3h9vb3xxi&id=btyubgz1		0	u\|t65klfgi7nf3h9vb3xxi\|id\|btyubgz1
+https://tailspin.us12.list-manage.com/track/click?u=qof7mesnrd2n7traz7dq&id=exg938vm	1	https	tailspin.us12.list-manage.com	/track/click	u=qof7mesnrd2n7traz7dq&id=exg938vm	https://tailspin.us12.list-manage.com/track/click?u=qof7mesnrd2n7traz7dq&id=exg938vm		0	u\|qof7mesnrd2n7traz7dq\|id\|exg938vm
+https://u688945.ct.sendgrid.net/ls/click?upn=6oh7o6wqh6sg6amedukm32mtmg6inw	1	https	u688945.ct.sendgrid.net	/ls/click	upn=6oh7o6wqh6sg6amedukm32mtmg6inw	https://u688945.ct.sendgrid.net/ls/click?upn=6oh7o6wqh6sg6amedukm32mtmg6inw		0	upn\|6oh7o6wqh6sg6amedukm32mtmg6inw
+https://u326912.ct.sendgrid.net/ls/click?upn=4e3igvbvrc5ta9uu543oiqc294v473	1	https	u326912.ct.sendgrid.net	/ls/click	upn=4e3igvbvrc5ta9uu543oiqc294v473	https://u326912.ct.sendgrid.net/ls/click?upn=4e3igvbvrc5ta9uu543oiqc294v473		0	upn\|4e3igvbvrc5ta9uu543oiqc294v473
+https://na2.docusign.net/Member/EmailStart.aspx?a=ao044n1gfvpmezvl998y	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=ao044n1gfvpmezvl998y	https://na2.docusign.net/Member/EmailStart.aspx?a=ao044n1gfvpmezvl998y		0	a\|ao044n1gfvpmezvl998y
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=c6zkg167jz	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=c6zkg167jz	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=c6zkg167jz		0	url\|https://admin.microsoft.com/AdminPortal\|data\|c6zkg167jz
+https://tailspin.us12.list-manage.com/track/click?u=7hr5nma1fpts97w7l65g&id=sg7rhhjw	1	https	tailspin.us12.list-manage.com	/track/click	u=7hr5nma1fpts97w7l65g&id=sg7rhhjw	https://tailspin.us12.list-manage.com/track/click?u=7hr5nma1fpts97w7l65g&id=sg7rhhjw		0	u\|7hr5nma1fpts97w7l65g\|id\|sg7rhhjw
+https://tailspin.us12.list-manage.com/track/click?u=v6xz7xhpca49c5glzozr&id=wc8tixuo	1	https	tailspin.us12.list-manage.com	/track/click	u=v6xz7xhpca49c5glzozr&id=wc8tixuo	https://tailspin.us12.list-manage.com/track/click?u=v6xz7xhpca49c5glzozr&id=wc8tixuo		0	u\|v6xz7xhpca49c5glzozr\|id\|wc8tixuo
+https://u869496.ct.sendgrid.net/ls/click?upn=trrktw444ox5mvnnkpzs27ru3tfkj8	1	https	u869496.ct.sendgrid.net	/ls/click	upn=trrktw444ox5mvnnkpzs27ru3tfkj8	https://u869496.ct.sendgrid.net/ls/click?upn=trrktw444ox5mvnnkpzs27ru3tfkj8		0	upn\|trrktw444ox5mvnnkpzs27ru3tfkj8
+https://u376037.ct.sendgrid.net/ls/click?upn=lp07nty26ifp9n02988zq9xgmakcc3	1	https	u376037.ct.sendgrid.net	/ls/click	upn=lp07nty26ifp9n02988zq9xgmakcc3	https://u376037.ct.sendgrid.net/ls/click?upn=lp07nty26ifp9n02988zq9xgmakcc3		0	upn\|lp07nty26ifp9n02988zq9xgmakcc3
+https://na2.docusign.net/Member/EmailStart.aspx?a=jyd8bfawzl682ja2xd14	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=jyd8bfawzl682ja2xd14	https://na2.docusign.net/Member/EmailStart.aspx?a=jyd8bfawzl682ja2xd14		0	a\|jyd8bfawzl682ja2xd14
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=tvscblwk8w	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=tvscblwk8w	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=tvscblwk8w		0	url\|https://admin.microsoft.com/AdminPortal\|data\|tvscblwk8w
+https://tailspin.us12.list-manage.com/track/click?u=2hnhgw6wbbsfxxoxtixb&id=s7n7i3qy	1	https	tailspin.us12.list-manage.com	/track/click	u=2hnhgw6wbbsfxxoxtixb&id=s7n7i3qy	https://tailspin.us12.list-manage.com/track/click?u=2hnhgw6wbbsfxxoxtixb&id=s7n7i3qy		0	u\|2hnhgw6wbbsfxxoxtixb\|id\|s7n7i3qy
+https://tailspin.us12.list-manage.com/track/click?u=2r356cbz5a8gfyc1mykv&id=ybq8erc8	1	https	tailspin.us12.list-manage.com	/track/click	u=2r356cbz5a8gfyc1mykv&id=ybq8erc8	https://tailspin.us12.list-manage.com/track/click?u=2r356cbz5a8gfyc1mykv&id=ybq8erc8		0	u\|2r356cbz5a8gfyc1mykv\|id\|ybq8erc8
+https://u487649.ct.sendgrid.net/ls/click?upn=427yj1cotkmky3poi0vhwz4dhbdt9t	1	https	u487649.ct.sendgrid.net	/ls/click	upn=427yj1cotkmky3poi0vhwz4dhbdt9t	https://u487649.ct.sendgrid.net/ls/click?upn=427yj1cotkmky3poi0vhwz4dhbdt9t		0	upn\|427yj1cotkmky3poi0vhwz4dhbdt9t
+https://u211634.ct.sendgrid.net/ls/click?upn=5wo05109h64w6kuni9t0w6s0mo5rq7	1	https	u211634.ct.sendgrid.net	/ls/click	upn=5wo05109h64w6kuni9t0w6s0mo5rq7	https://u211634.ct.sendgrid.net/ls/click?upn=5wo05109h64w6kuni9t0w6s0mo5rq7		0	upn\|5wo05109h64w6kuni9t0w6s0mo5rq7
+https://na2.docusign.net/Member/EmailStart.aspx?a=r71wthp3gti7oifpfn4m	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=r71wthp3gti7oifpfn4m	https://na2.docusign.net/Member/EmailStart.aspx?a=r71wthp3gti7oifpfn4m		0	a\|r71wthp3gti7oifpfn4m
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=wepk36c9oz	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=wepk36c9oz	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=wepk36c9oz		0	url\|https://admin.microsoft.com/AdminPortal\|data\|wepk36c9oz
+https://tailspin.us12.list-manage.com/track/click?u=j2siv4ymja21oix6o2ii&id=7bpvsoy6	1	https	tailspin.us12.list-manage.com	/track/click	u=j2siv4ymja21oix6o2ii&id=7bpvsoy6	https://tailspin.us12.list-manage.com/track/click?u=j2siv4ymja21oix6o2ii&id=7bpvsoy6		0	u\|j2siv4ymja21oix6o2ii\|id\|7bpvsoy6
+https://tailspin.us12.list-manage.com/track/click?u=idp5whanvm7pibs3oc8b&id=mtk42p26	1	https	tailspin.us12.list-manage.com	/track/click	u=idp5whanvm7pibs3oc8b&id=mtk42p26	https://tailspin.us12.list-manage.com/track/click?u=idp5whanvm7pibs3oc8b&id=mtk42p26		0	u\|idp5whanvm7pibs3oc8b\|id\|mtk42p26
+https://u714052.ct.sendgrid.net/ls/click?upn=ct6oozyvxpgx6ttk491gjs2yqcr0wf	1	https	u714052.ct.sendgrid.net	/ls/click	upn=ct6oozyvxpgx6ttk491gjs2yqcr0wf	https://u714052.ct.sendgrid.net/ls/click?upn=ct6oozyvxpgx6ttk491gjs2yqcr0wf		0	upn\|ct6oozyvxpgx6ttk491gjs2yqcr0wf
+https://u878255.ct.sendgrid.net/ls/click?upn=iuvn4xy5y0opgzesyvusn5ajzb3vke	1	https	u878255.ct.sendgrid.net	/ls/click	upn=iuvn4xy5y0opgzesyvusn5ajzb3vke	https://u878255.ct.sendgrid.net/ls/click?upn=iuvn4xy5y0opgzesyvusn5ajzb3vke		0	upn\|iuvn4xy5y0opgzesyvusn5ajzb3vke
+https://na2.docusign.net/Member/EmailStart.aspx?a=4wa4nwdby5luh7ckhdso	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=4wa4nwdby5luh7ckhdso	https://na2.docusign.net/Member/EmailStart.aspx?a=4wa4nwdby5luh7ckhdso		0	a\|4wa4nwdby5luh7ckhdso
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=kh1c8bjcc3	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=kh1c8bjcc3	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=kh1c8bjcc3		0	url\|https://admin.microsoft.com/AdminPortal\|data\|kh1c8bjcc3
+https://tailspin.us12.list-manage.com/track/click?u=07ivafchyrzu9k6yqoj6&id=zaqc4tw6	1	https	tailspin.us12.list-manage.com	/track/click	u=07ivafchyrzu9k6yqoj6&id=zaqc4tw6	https://tailspin.us12.list-manage.com/track/click?u=07ivafchyrzu9k6yqoj6&id=zaqc4tw6		0	u\|07ivafchyrzu9k6yqoj6\|id\|zaqc4tw6
+https://tailspin.us12.list-manage.com/track/click?u=4cd51l7rahenns92390b&id=tfi9y9ff	1	https	tailspin.us12.list-manage.com	/track/click	u=4cd51l7rahenns92390b&id=tfi9y9ff	https://tailspin.us12.list-manage.com/track/click?u=4cd51l7rahenns92390b&id=tfi9y9ff		0	u\|4cd51l7rahenns92390b\|id\|tfi9y9ff
+https://u818238.ct.sendgrid.net/ls/click?upn=b0p2yeo3zb27sx4xm9vwk34zjwlo7h	1	https	u818238.ct.sendgrid.net	/ls/click	upn=b0p2yeo3zb27sx4xm9vwk34zjwlo7h	https://u818238.ct.sendgrid.net/ls/click?upn=b0p2yeo3zb27sx4xm9vwk34zjwlo7h		0	upn\|b0p2yeo3zb27sx4xm9vwk34zjwlo7h
+https://u728959.ct.sendgrid.net/ls/click?upn=7u979wq4xfoamzk35n7i4wdokhg7w2	1	https	u728959.ct.sendgrid.net	/ls/click	upn=7u979wq4xfoamzk35n7i4wdokhg7w2	https://u728959.ct.sendgrid.net/ls/click?upn=7u979wq4xfoamzk35n7i4wdokhg7w2		0	upn\|7u979wq4xfoamzk35n7i4wdokhg7w2
+https://na2.docusign.net/Member/EmailStart.aspx?a=xikrpjrwsddk1nd9d97n	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=xikrpjrwsddk1nd9d97n	https://na2.docusign.net/Member/EmailStart.aspx?a=xikrpjrwsddk1nd9d97n		0	a\|xikrpjrwsddk1nd9d97n
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=5d74v124ej	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=5d74v124ej	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=5d74v124ej		0	url\|https://admin.microsoft.com/AdminPortal\|data\|5d74v124ej
+https://tailspin.us12.list-manage.com/track/click?u=8prt8sorabrb9ybrntac&id=3jcwbly9	1	https	tailspin.us12.list-manage.com	/track/click	u=8prt8sorabrb9ybrntac&id=3jcwbly9	https://tailspin.us12.list-manage.com/track/click?u=8prt8sorabrb9ybrntac&id=3jcwbly9		0	u\|8prt8sorabrb9ybrntac\|id\|3jcwbly9
+https://tailspin.us12.list-manage.com/track/click?u=ee3uzzynjl9l3xem7t8q&id=m5x8glzl	1	https	tailspin.us12.list-manage.com	/track/click	u=ee3uzzynjl9l3xem7t8q&id=m5x8glzl	https://tailspin.us12.list-manage.com/track/click?u=ee3uzzynjl9l3xem7t8q&id=m5x8glzl		0	u\|ee3uzzynjl9l3xem7t8q\|id\|m5x8glzl
+https://u935374.ct.sendgrid.net/ls/click?upn=lxwm0u5ynofllc0v9t55c1nxzpq0q4	1	https	u935374.ct.sendgrid.net	/ls/click	upn=lxwm0u5ynofllc0v9t55c1nxzpq0q4	https://u935374.ct.sendgrid.net/ls/click?upn=lxwm0u5ynofllc0v9t55c1nxzpq0q4		0	upn\|lxwm0u5ynofllc0v9t55c1nxzpq0q4
+https://u571532.ct.sendgrid.net/ls/click?upn=x3zkeeexz6tm6hj63ffzxve86g58ik	1	https	u571532.ct.sendgrid.net	/ls/click	upn=x3zkeeexz6tm6hj63ffzxve86g58ik	https://u571532.ct.sendgrid.net/ls/click?upn=x3zkeeexz6tm6hj63ffzxve86g58ik		0	upn\|x3zkeeexz6tm6hj63ffzxve86g58ik
+https://na2.docusign.net/Member/EmailStart.aspx?a=ux0ygjkceeyjbearkul0	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=ux0ygjkceeyjbearkul0	https://na2.docusign.net/Member/EmailStart.aspx?a=ux0ygjkceeyjbearkul0		0	a\|ux0ygjkceeyjbearkul0
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=9x9phai27e	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=9x9phai27e	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=9x9phai27e		0	url\|https://admin.microsoft.com/AdminPortal\|data\|9x9phai27e
+https://tailspin.us12.list-manage.com/track/click?u=4u6ktmc8srgpwnx95p2s&id=tal4fq6z	1	https	tailspin.us12.list-manage.com	/track/click	u=4u6ktmc8srgpwnx95p2s&id=tal4fq6z	https://tailspin.us12.list-manage.com/track/click?u=4u6ktmc8srgpwnx95p2s&id=tal4fq6z		0	u\|4u6ktmc8srgpwnx95p2s\|id\|tal4fq6z
+https://tailspin.us12.list-manage.com/track/click?u=2shbkwc3qsnd2zuydwzg&id=hu3j76ke	1	https	tailspin.us12.list-manage.com	/track/click	u=2shbkwc3qsnd2zuydwzg&id=hu3j76ke	https://tailspin.us12.list-manage.com/track/click?u=2shbkwc3qsnd2zuydwzg&id=hu3j76ke		0	u\|2shbkwc3qsnd2zuydwzg\|id\|hu3j76ke
+https://u583319.ct.sendgrid.net/ls/click?upn=7yu1n0tlnzhif3u8jzosxma0nwkuy2	1	https	u583319.ct.sendgrid.net	/ls/click	upn=7yu1n0tlnzhif3u8jzosxma0nwkuy2	https://u583319.ct.sendgrid.net/ls/click?upn=7yu1n0tlnzhif3u8jzosxma0nwkuy2		0	upn\|7yu1n0tlnzhif3u8jzosxma0nwkuy2
+https://u624528.ct.sendgrid.net/ls/click?upn=a7aen40mxv417du6uuiz1kqr8fgonm	1	https	u624528.ct.sendgrid.net	/ls/click	upn=a7aen40mxv417du6uuiz1kqr8fgonm	https://u624528.ct.sendgrid.net/ls/click?upn=a7aen40mxv417du6uuiz1kqr8fgonm		0	upn\|a7aen40mxv417du6uuiz1kqr8fgonm
+https://na2.docusign.net/Member/EmailStart.aspx?a=wd3a41nurc7ep93qx9md	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=wd3a41nurc7ep93qx9md	https://na2.docusign.net/Member/EmailStart.aspx?a=wd3a41nurc7ep93qx9md		0	a\|wd3a41nurc7ep93qx9md
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=3r7q0d1toa	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=3r7q0d1toa	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=3r7q0d1toa		0	url\|https://admin.microsoft.com/AdminPortal\|data\|3r7q0d1toa
+https://tailspin.us12.list-manage.com/track/click?u=8lo1scvdby1tjy6tsxph&id=zrj2bgwj	1	https	tailspin.us12.list-manage.com	/track/click	u=8lo1scvdby1tjy6tsxph&id=zrj2bgwj	https://tailspin.us12.list-manage.com/track/click?u=8lo1scvdby1tjy6tsxph&id=zrj2bgwj		0	u\|8lo1scvdby1tjy6tsxph\|id\|zrj2bgwj
+https://tailspin.us12.list-manage.com/track/click?u=m9ybsav32bki8xnvixsg&id=6d2snukv	1	https	tailspin.us12.list-manage.com	/track/click	u=m9ybsav32bki8xnvixsg&id=6d2snukv	https://tailspin.us12.list-manage.com/track/click?u=m9ybsav32bki8xnvixsg&id=6d2snukv		0	u\|m9ybsav32bki8xnvixsg\|id\|6d2snukv
+https://u275182.ct.sendgrid.net/ls/click?upn=7zt3pkz3aywuckcargpb6zbzbfw6o3	1	https	u275182.ct.sendgrid.net	/ls/click	upn=7zt3pkz3aywuckcargpb6zbzbfw6o3	https://u275182.ct.sendgrid.net/ls/click?upn=7zt3pkz3aywuckcargpb6zbzbfw6o3		0	upn\|7zt3pkz3aywuckcargpb6zbzbfw6o3
+https://u386136.ct.sendgrid.net/ls/click?upn=53lf10q8xzc0seg4egym90nfajxr1t	1	https	u386136.ct.sendgrid.net	/ls/click	upn=53lf10q8xzc0seg4egym90nfajxr1t	https://u386136.ct.sendgrid.net/ls/click?upn=53lf10q8xzc0seg4egym90nfajxr1t		0	upn\|53lf10q8xzc0seg4egym90nfajxr1t
+https://na2.docusign.net/Member/EmailStart.aspx?a=hm993z27wcc72deywarx	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=hm993z27wcc72deywarx	https://na2.docusign.net/Member/EmailStart.aspx?a=hm993z27wcc72deywarx		0	a\|hm993z27wcc72deywarx
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=j92j9b5ubk	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=j92j9b5ubk	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=j92j9b5ubk		0	url\|https://admin.microsoft.com/AdminPortal\|data\|j92j9b5ubk
+https://tailspin.us12.list-manage.com/track/click?u=vm07777ybsk8tjrmh88t&id=1bpojrmz	1	https	tailspin.us12.list-manage.com	/track/click	u=vm07777ybsk8tjrmh88t&id=1bpojrmz	https://tailspin.us12.list-manage.com/track/click?u=vm07777ybsk8tjrmh88t&id=1bpojrmz		0	u\|vm07777ybsk8tjrmh88t\|id\|1bpojrmz
+https://tailspin.us12.list-manage.com/track/click?u=b79d2obp9zugbb0rrhsz&id=c4km2f2a	1	https	tailspin.us12.list-manage.com	/track/click	u=b79d2obp9zugbb0rrhsz&id=c4km2f2a	https://tailspin.us12.list-manage.com/track/click?u=b79d2obp9zugbb0rrhsz&id=c4km2f2a		0	u\|b79d2obp9zugbb0rrhsz\|id\|c4km2f2a
+https://u385456.ct.sendgrid.net/ls/click?upn=t7oisy3heaw0grqv6l4zt3le3e9law	1	https	u385456.ct.sendgrid.net	/ls/click	upn=t7oisy3heaw0grqv6l4zt3le3e9law	https://u385456.ct.sendgrid.net/ls/click?upn=t7oisy3heaw0grqv6l4zt3le3e9law		0	upn\|t7oisy3heaw0grqv6l4zt3le3e9law
+https://u661569.ct.sendgrid.net/ls/click?upn=fbfxbkso2eh7taf0yg6tb1v926rlfj	1	https	u661569.ct.sendgrid.net	/ls/click	upn=fbfxbkso2eh7taf0yg6tb1v926rlfj	https://u661569.ct.sendgrid.net/ls/click?upn=fbfxbkso2eh7taf0yg6tb1v926rlfj		0	upn\|fbfxbkso2eh7taf0yg6tb1v926rlfj
+https://na2.docusign.net/Member/EmailStart.aspx?a=k24ltuk05l8eberg03mb	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=k24ltuk05l8eberg03mb	https://na2.docusign.net/Member/EmailStart.aspx?a=k24ltuk05l8eberg03mb		0	a\|k24ltuk05l8eberg03mb
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=pk02e7jqw9	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=pk02e7jqw9	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=pk02e7jqw9		0	url\|https://admin.microsoft.com/AdminPortal\|data\|pk02e7jqw9
+https://tailspin.us12.list-manage.com/track/click?u=s8whi1aejou2r5xwcce0&id=n4ec220f	1	https	tailspin.us12.list-manage.com	/track/click	u=s8whi1aejou2r5xwcce0&id=n4ec220f	https://tailspin.us12.list-manage.com/track/click?u=s8whi1aejou2r5xwcce0&id=n4ec220f		0	u\|s8whi1aejou2r5xwcce0\|id\|n4ec220f
+https://tailspin.us12.list-manage.com/track/click?u=rjgmm34cxg4o6w9napmu&id=9wukb4ye	1	https	tailspin.us12.list-manage.com	/track/click	u=rjgmm34cxg4o6w9napmu&id=9wukb4ye	https://tailspin.us12.list-manage.com/track/click?u=rjgmm34cxg4o6w9napmu&id=9wukb4ye		0	u\|rjgmm34cxg4o6w9napmu\|id\|9wukb4ye
+https://u619620.ct.sendgrid.net/ls/click?upn=6w3j1kereai1r9zaqxat1r787u5ape	1	https	u619620.ct.sendgrid.net	/ls/click	upn=6w3j1kereai1r9zaqxat1r787u5ape	https://u619620.ct.sendgrid.net/ls/click?upn=6w3j1kereai1r9zaqxat1r787u5ape		0	upn\|6w3j1kereai1r9zaqxat1r787u5ape
+https://u773071.ct.sendgrid.net/ls/click?upn=iu7h4e3oflodibntrlvcfhhxu3eqbv	1	https	u773071.ct.sendgrid.net	/ls/click	upn=iu7h4e3oflodibntrlvcfhhxu3eqbv	https://u773071.ct.sendgrid.net/ls/click?upn=iu7h4e3oflodibntrlvcfhhxu3eqbv		0	upn\|iu7h4e3oflodibntrlvcfhhxu3eqbv
+https://na2.docusign.net/Member/EmailStart.aspx?a=e4alt0e12t6rzuf0ase7	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=e4alt0e12t6rzuf0ase7	https://na2.docusign.net/Member/EmailStart.aspx?a=e4alt0e12t6rzuf0ase7		0	a\|e4alt0e12t6rzuf0ase7
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=aohppv0acw	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=aohppv0acw	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=aohppv0acw		0	url\|https://admin.microsoft.com/AdminPortal\|data\|aohppv0acw
+https://tailspin.us12.list-manage.com/track/click?u=uj1ylnu0gxiuvc1hzh8s&id=dpbebypq	1	https	tailspin.us12.list-manage.com	/track/click	u=uj1ylnu0gxiuvc1hzh8s&id=dpbebypq	https://tailspin.us12.list-manage.com/track/click?u=uj1ylnu0gxiuvc1hzh8s&id=dpbebypq		0	u\|uj1ylnu0gxiuvc1hzh8s\|id\|dpbebypq
+https://tailspin.us12.list-manage.com/track/click?u=3z7ir7w2daanicremcuh&id=2z2c5f0y	1	https	tailspin.us12.list-manage.com	/track/click	u=3z7ir7w2daanicremcuh&id=2z2c5f0y	https://tailspin.us12.list-manage.com/track/click?u=3z7ir7w2daanicremcuh&id=2z2c5f0y		0	u\|3z7ir7w2daanicremcuh\|id\|2z2c5f0y
+https://u263991.ct.sendgrid.net/ls/click?upn=d9upzzaqvlei4ji081mbgpxy49vjcx	1	https	u263991.ct.sendgrid.net	/ls/click	upn=d9upzzaqvlei4ji081mbgpxy49vjcx	https://u263991.ct.sendgrid.net/ls/click?upn=d9upzzaqvlei4ji081mbgpxy49vjcx		0	upn\|d9upzzaqvlei4ji081mbgpxy49vjcx
+https://u969598.ct.sendgrid.net/ls/click?upn=cuknu9h6vq8bhtnu9es0g0jleohvz6	1	https	u969598.ct.sendgrid.net	/ls/click	upn=cuknu9h6vq8bhtnu9es0g0jleohvz6	https://u969598.ct.sendgrid.net/ls/click?upn=cuknu9h6vq8bhtnu9es0g0jleohvz6		0	upn\|cuknu9h6vq8bhtnu9es0g0jleohvz6
+https://na2.docusign.net/Member/EmailStart.aspx?a=7l9pux0v3wljk82wkhtz	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=7l9pux0v3wljk82wkhtz	https://na2.docusign.net/Member/EmailStart.aspx?a=7l9pux0v3wljk82wkhtz		0	a\|7l9pux0v3wljk82wkhtz
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=t0oa6t3zcx	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=t0oa6t3zcx	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=t0oa6t3zcx		0	url\|https://admin.microsoft.com/AdminPortal\|data\|t0oa6t3zcx
+https://tailspin.us12.list-manage.com/track/click?u=6q13gipr9tu9ps8ot4r4&id=4dcncw9y	1	https	tailspin.us12.list-manage.com	/track/click	u=6q13gipr9tu9ps8ot4r4&id=4dcncw9y	https://tailspin.us12.list-manage.com/track/click?u=6q13gipr9tu9ps8ot4r4&id=4dcncw9y		0	u\|6q13gipr9tu9ps8ot4r4\|id\|4dcncw9y
+https://tailspin.us12.list-manage.com/track/click?u=19appf8a1ba7sh4hh11d&id=xypwz11f	1	https	tailspin.us12.list-manage.com	/track/click	u=19appf8a1ba7sh4hh11d&id=xypwz11f	https://tailspin.us12.list-manage.com/track/click?u=19appf8a1ba7sh4hh11d&id=xypwz11f		0	u\|19appf8a1ba7sh4hh11d\|id\|xypwz11f
+https://u373116.ct.sendgrid.net/ls/click?upn=0jvbrfvek2qpfks7n99nqa777ncpsa	1	https	u373116.ct.sendgrid.net	/ls/click	upn=0jvbrfvek2qpfks7n99nqa777ncpsa	https://u373116.ct.sendgrid.net/ls/click?upn=0jvbrfvek2qpfks7n99nqa777ncpsa		0	upn\|0jvbrfvek2qpfks7n99nqa777ncpsa
+https://u570364.ct.sendgrid.net/ls/click?upn=unwfeannua1gn3xg4t3vchwvow2e66	1	https	u570364.ct.sendgrid.net	/ls/click	upn=unwfeannua1gn3xg4t3vchwvow2e66	https://u570364.ct.sendgrid.net/ls/click?upn=unwfeannua1gn3xg4t3vchwvow2e66		0	upn\|unwfeannua1gn3xg4t3vchwvow2e66
+https://na2.docusign.net/Member/EmailStart.aspx?a=1r0p7jt9dghq8u6a3zfe	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=1r0p7jt9dghq8u6a3zfe	https://na2.docusign.net/Member/EmailStart.aspx?a=1r0p7jt9dghq8u6a3zfe		0	a\|1r0p7jt9dghq8u6a3zfe
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=d42qg26d7j	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=d42qg26d7j	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=d42qg26d7j		0	url\|https://admin.microsoft.com/AdminPortal\|data\|d42qg26d7j
+https://tailspin.us12.list-manage.com/track/click?u=pacr0az0d04vvr19kzpv&id=7eodlqq8	1	https	tailspin.us12.list-manage.com	/track/click	u=pacr0az0d04vvr19kzpv&id=7eodlqq8	https://tailspin.us12.list-manage.com/track/click?u=pacr0az0d04vvr19kzpv&id=7eodlqq8		0	u\|pacr0az0d04vvr19kzpv\|id\|7eodlqq8
+https://tailspin.us12.list-manage.com/track/click?u=1ti1ki71ctoof2dp4ddo&id=1hnzsyky	1	https	tailspin.us12.list-manage.com	/track/click	u=1ti1ki71ctoof2dp4ddo&id=1hnzsyky	https://tailspin.us12.list-manage.com/track/click?u=1ti1ki71ctoof2dp4ddo&id=1hnzsyky		0	u\|1ti1ki71ctoof2dp4ddo\|id\|1hnzsyky
+https://u552826.ct.sendgrid.net/ls/click?upn=li56v6o3p869uvyb46d123u2yal8nh	1	https	u552826.ct.sendgrid.net	/ls/click	upn=li56v6o3p869uvyb46d123u2yal8nh	https://u552826.ct.sendgrid.net/ls/click?upn=li56v6o3p869uvyb46d123u2yal8nh		0	upn\|li56v6o3p869uvyb46d123u2yal8nh
+https://u882057.ct.sendgrid.net/ls/click?upn=c1xg9q79jqsz13zo48kuypdmzkmj6z	1	https	u882057.ct.sendgrid.net	/ls/click	upn=c1xg9q79jqsz13zo48kuypdmzkmj6z	https://u882057.ct.sendgrid.net/ls/click?upn=c1xg9q79jqsz13zo48kuypdmzkmj6z		0	upn\|c1xg9q79jqsz13zo48kuypdmzkmj6z
+https://na2.docusign.net/Member/EmailStart.aspx?a=3dq972y3cgcjuwfcyr78	1	https	na2.docusign.net	/Member/EmailStart.aspx	a=3dq972y3cgcjuwfcyr78	https://na2.docusign.net/Member/EmailStart.aspx?a=3dq972y3cgcjuwfcyr78		0	a\|3dq972y3cgcjuwfcyr78
+https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=42nv6m8w6x	1	https	nam06.safelinks.protection.outlook.com	/	url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=42nv6m8w6x	https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal&data=42nv6m8w6x		0	url\|https://admin.microsoft.com/AdminPortal\|data\|42nv6m8w6x
+https://tailspin.us12.list-manage.com/track/click?u=nujftjg20et8ikgj3vd7&id=f9ljgckz	1	https	tailspin.us12.list-manage.com	/track/click	u=nujftjg20et8ikgj3vd7&id=f9ljgckz	https://tailspin.us12.list-manage.com/track/click?u=nujftjg20et8ikgj3vd7&id=f9ljgckz		0	u\|nujftjg20et8ikgj3vd7\|id\|f9ljgckz
+https://tailspin.us12.list-manage.com/track/click?u=u7afcche7lnhgyj3fxab&id=xusi8fap	1	https	tailspin.us12.list-manage.com	/track/click	u=u7afcche7lnhgyj3fxab&id=xusi8fap	https://tailspin.us12.list-manage.com/track/click?u=u7afcche7lnhgyj3fxab&id=xusi8fap		0	u\|u7afcche7lnhgyj3fxab\|id\|xusi8fap
+https://u475381.ct.sendgrid.net/ls/click?upn=fqzkzausz58mx3j6h4ammr6yiguenm	1	https	u475381.ct.sendgrid.net	/ls/click	upn=fqzkzausz58mx3j6h4ammr6yiguenm	https://u475381.ct.sendgrid.net/ls/click?upn=fqzkzausz58mx3j6h4ammr6yiguenm		0	upn\|fqzkzausz58mx3j6h4ammr6yiguenm
+https://u303007.ct.sendgrid.net/ls/click?upn=u5c1j86hd0t9gsi3gwoks9csb2y5hf	1	https	u303007.ct.sendgrid.net	/ls/click	upn=u5c1j86hd0t9gsi3gwoks9csb2y5hf	https://u303007.ct.sendgrid.net/ls/click?upn=u5c1j86hd0t9gsi3gwoks9csb2y5hf		0	upn\|u5c1j86hd0t9gsi3gwoks9csb2y5hf

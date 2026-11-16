@@ -34,7 +34,7 @@ TEST(Psl, RefusesATruncatedList) {
 TEST(Psl, SharedVectors) {
   auto p = testdata::psl();
   size_t n = 0;
-  for (const std::string& l : testdata::lines(MAILLOOKALIKE_TEST_VECTORS "/psl.tsv")) {
+  for (const std::string& l : testdata::lines(testdata::vectors("psl.tsv"))) {
     if (l.empty() || l[0] == '#') continue;
     const auto f = testdata::split(l, '\t');
     ASSERT_EQ(f.size(), 3u) << l;
