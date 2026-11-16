@@ -31,6 +31,23 @@ TEST(Psl, RefusesATruncatedList) {
   EXPECT_FALSE(err.empty());
 }
 
+// Only the caller's list is used, never libpsl's built-in or the distribution's list: a rule added to the text is
+// honoured and a rule removed from it is gone.
+TEST(Psl, UsesOnlyTheGivenList) {
+  std::string text = testdata::read(MAILLOOKALIKE_TEST_DATA "/public_suffix_list.dat");
+  const size_t p = text.find("\nco.uk\n");
+  ASSERT_NE(p, std::string::npos);
+  text.erase(p, 6);
+  text += "\nmaillookalike-fixture.test\n";
+  std::string err;
+  auto psl = maillookalike::Psl::load(text, {}, &err);
+  ASSERT_TRUE(psl) << err;
+  EXPECT_EQ(psl->registrable("a.b.co.uk"), "co.uk");
+  EXPECT_FALSE(psl->listed("co.uk"));
+  EXPECT_EQ(psl->registrable("a.b.maillookalike-fixture.test"), "b.maillookalike-fixture.test");
+  EXPECT_TRUE(psl->listed("maillookalike-fixture.test"));
+}
+
 TEST(Psl, SharedVectors) {
   auto p = testdata::psl();
   size_t n = 0;
