@@ -1,0 +1,97 @@
+# type	input	address (name checks; empty: host check)	expected (kind:severity:target, comma-separated; spikes/lookalike attacks)
+combined_homoglyph_tld_swap	ԍооԍӏе.net		homoglyph:danger:google.net,homoglyph:danger:google.it.ao,homoglyph:danger:google.com,homoglyph:danger:google.co.uk,homoglyph:danger:google.de,homoglyph:danger:google.fr,homoglyph:danger:google.co.in,homoglyph:danger:google.co.jp,homoglyph:danger:google.com.br,homoglyph:danger:google.ca,homoglyph:danger:google.com.au,homoglyph:danger:google.es,homoglyph:danger:google.it,homoglyph:danger:google.nl
+combined_homoglyph_tld_swap	аԁоье.net		homoglyph:danger:adobe.com
+combined_homoglyph_tld_swap	раураӏ.net		homoglyph:danger:paypal.com,homoglyph:danger:paypal.me
+control_exact	microsoft.com		
+control_exact	google.com		
+control_exact	apple.com		
+control_name_brand_own_domain	Microsoft	no-reply@microsoft.com	
+control_name_brand_own_domain	Microsoft 365	no-reply@microsoft.com	
+control_name_brand_own_domain	Google	no-reply@google.com	
+control_name_embedded_same_domain	Booking.com	noreply@booking.com	
+control_name_embedded_same_domain	support@github.com	noreply@github.com	
+control_name_generic_brand_as_person	Apple Miller	x@example-person.org	
+control_name_generic_brand_as_person	Box Miller	x@example-person.org	
+control_name_generic_brand_as_person	Zoom Miller	x@example-person.org	
+control_name_org_own_domain	Kestrel Works Payroll	payroll@kestrelworks.com	
+control_name_own_address	Alex Morgan	alex.morgan@kestrelworks.com	
+control_subdomain	mail.microsoft.com		
+control_subdomain	mail.google.com		
+control_subdomain	mail.apple.com		
+cousin_concat	sharepointlogin.com		token:danger:microsoft.com
+cousin_concat	icloud365.com		token:danger:apple.com
+cousin_concat	instagramaccount.com		token:danger:meta.com
+cousin_hyphen	sharepoint-login.com		token:danger:microsoft.com
+cousin_hyphen	youtube-service.com		token:danger:google.com
+cousin_hyphen	icloud-365.com		token:danger:apple.com
+cousin_prefix	login-sharepoint.net		token:danger:microsoft.com
+cousin_prefix	service-youtube.net		token:danger:google.com
+cousin_prefix	365-icloud.net		token:danger:apple.com
+cousin_typo_token	sharepint-login.com		token:danger:microsoft.com
+cousin_typo_token	youtbe-service.com		token:danger:google.com
+cousin_typo_token	instagra-account.com		token:danger:meta.com
+homoglyph_latin_diacritic	mîcrosoft.com		homoglyph:danger:microsoft.com
+homoglyph_latin_diacritic	gooğle.com		homoglyph:danger:google.com,homoglyph:danger:google.it.ao,homoglyph:danger:google.net,homoglyph:danger:google.co.uk,homoglyph:danger:google.de,homoglyph:danger:google.fr,homoglyph:danger:google.co.in,homoglyph:danger:google.co.jp,homoglyph:danger:google.com.br,homoglyph:danger:google.ca,homoglyph:danger:google.com.au,homoglyph:danger:google.es,homoglyph:danger:google.it,homoglyph:danger:google.nl
+homoglyph_latin_diacritic	âpple.com		homoglyph:danger:apple.com
+homoglyph_mixed_script	micr০soft.com		homoglyph:danger:microsoft.com
+homoglyph_mixed_script	googlе.com		homoglyph:danger:google.com,homoglyph:danger:google.it.ao,homoglyph:danger:google.net,homoglyph:danger:google.co.uk,homoglyph:danger:google.de,homoglyph:danger:google.fr,homoglyph:danger:google.co.in,homoglyph:danger:google.co.jp,homoglyph:danger:google.com.br,homoglyph:danger:google.ca,homoglyph:danger:google.com.au,homoglyph:danger:google.es,homoglyph:danger:google.it,homoglyph:danger:google.nl
+homoglyph_mixed_script	ȧpple.com		homoglyph:danger:apple.com
+homoglyph_whole_script	ԍооԍӏе.com		homoglyph:danger:google.com,homoglyph:danger:google.it.ao,homoglyph:danger:google.net,homoglyph:danger:google.co.uk,homoglyph:danger:google.de,homoglyph:danger:google.fr,homoglyph:danger:google.co.in,homoglyph:danger:google.co.jp,homoglyph:danger:google.com.br,homoglyph:danger:google.ca,homoglyph:danger:google.com.au,homoglyph:danger:google.es,homoglyph:danger:google.it,homoglyph:danger:google.nl
+homoglyph_whole_script	аррӏе.com		homoglyph:danger:apple.com
+homoglyph_whole_script	мета.com		homoglyph:danger:meta.com
+name_brand_I_for_l	PayPaI	notice@secure-mail-notice.com	brand_name:danger:paypal
+name_brand_I_for_l	AppIe Support	notice@secure-mail-notice.com	brand_name:danger:apple
+name_brand_I_for_l	LinkedIn Notifications	notice@secure-mail-notice.com	brand_name:danger:linkedin
+name_brand_exact	Microsoft	notice@secure-mail-notice.com	brand_name:danger:microsoft
+name_brand_exact	Microsoft 365	notice@secure-mail-notice.com	brand_name:danger:microsoft
+name_brand_exact	Google	notice@secure-mail-notice.com	brand_name:danger:google
+name_brand_homoglyph	Mіcrosoft	notice@secure-mail-notice.com	brand_name:danger:microsoft
+name_brand_homoglyph	Mіcrosoft 365	notice@secure-mail-notice.com	brand_name:danger:microsoft
+name_brand_homoglyph	Gоogle	notice@secure-mail-notice.com	brand_name:danger:google
+name_brand_uppercase	MICROSOFT	notice@secure-mail-notice.com	brand_name:danger:microsoft
+name_brand_uppercase	MICROSOFT 365	notice@secure-mail-notice.com	brand_name:danger:microsoft
+name_brand_uppercase	GOOGLE	notice@secure-mail-notice.com	brand_name:danger:google
+name_brand_with_service_word	Microsoft Support	notice@secure-mail-notice.com	brand_name:danger:microsoft
+name_brand_with_service_word	Microsoft 365 Support	notice@secure-mail-notice.com	brand_name:danger:microsoft
+name_brand_with_service_word	Google Support	notice@secure-mail-notice.com	brand_name:danger:google
+name_embedded_address	ceo@kestrelworks.com	ceo.office@gmail.com	embedded_address:danger:kestrelworks.com
+name_embedded_address	billing@paypal.com	notice@secure-mail-notice.com	brand_name:danger:paypal,embedded_address:danger:paypal.com
+name_embedded_domain	accounts.google.com	notice@secure-mail-notice.com	brand_name:danger:google,embedded_address:caution:google.com
+name_embedded_domain	CNET News.com	newsletter@mailer-example.net	embedded_address:caution:news.com
+name_org	Kestrel Works Payroll	payroll@kestrel-hr.com	org_name:danger:Kestrel Works
+name_org	KESTREL WORKS IT Helpdesk	it@helpdesk-portal.net	org_name:danger:Kestrel Works
+name_own_homoglyph	Alex Mоrgan	alex@gmail.com	own_name:danger:Alex Morgan
+name_own_new_address	Alex Morgan	alex.morgan@protonmail.com	own_name:danger:Alex Morgan
+subdomain_brand_label	sharepoint.secure-verify.top		subdomain_label:caution:microsoft.com
+subdomain_brand_label	youtube.mail-notice.online		subdomain_label:caution:google.com
+subdomain_brand_label	icloud.billing-center.info		subdomain_label:caution:apple.com
+subdomain_full_domain	microsoft.com.secure-verify.top		subdomain_abuse:danger:microsoft.com
+subdomain_full_domain	google.com.mail-notice.online		subdomain_abuse:danger:google.com
+subdomain_full_domain	apple.com.billing-center.info		subdomain_abuse:danger:apple.com
+subdomain_full_domain_deep	login.microsoft.com.session-870.secure-verify.top		subdomain_abuse:danger:microsoft.com
+subdomain_full_domain_deep	login.google.com.session-1645.mail-notice.online		subdomain_abuse:danger:google.com
+subdomain_full_domain_deep	login.apple.com.session-7107.billing-center.info		subdomain_abuse:danger:apple.com
+tld_swap	microsoft.info		tld_swap:caution:microsoft.com
+tld_swap	google.io		tld_swap:caution:google.it.ao,tld_swap:caution:google.net,tld_swap:caution:google.com,tld_swap:caution:google.co.uk,tld_swap:caution:google.de,tld_swap:caution:google.fr,tld_swap:caution:google.co.in,tld_swap:caution:google.co.jp,tld_swap:caution:google.com.br,tld_swap:caution:google.ca,tld_swap:caution:google.com.au,tld_swap:caution:google.es,tld_swap:caution:google.it,tld_swap:caution:google.nl
+tld_swap	amazon.top		tld_swap:caution:amazon.at,tld_swap:caution:amazon.com,tld_swap:caution:amazon.co.uk,tld_swap:caution:amazon.de,tld_swap:caution:amazon.fr,tld_swap:caution:amazon.it,tld_swap:caution:amazon.es,tld_swap:caution:amazon.ca,tld_swap:caution:amazon.co.jp,tld_swap:caution:amazon.in,tld_swap:caution:amazon.com.au,tld_swap:caution:amazon.com.br,tld_swap:caution:amazon.nl,tld_swap:caution:amazon.com.mx,tld_swap:caution:amazon.jobs
+typo_deletion	micrsoft.com		typo:danger:microsoft.com
+typo_deletion	googe.com		typo:danger:google.com
+typo_deletion	amazo.com		typo:danger:amazon.com
+typo_duplication	microsooft.com		typo:danger:microsoft.com
+typo_duplication	ggoogle.com		typo:danger:google.com
+typo_duplication	ammazon.com		typo:danger:amazon.com
+typo_insertion	mzicrosoft.com		typo:danger:microsoft.com
+typo_insertion	gvoogle.com		typo:danger:google.com
+typo_insertion	amazson.com		typo:danger:amazon.com
+typo_substitution	micfosoft.com		typo:danger:microsoft.com
+typo_substitution	gopgle.com		typo:danger:google.com
+typo_substitution	amazoh.com		typo:danger:amazon.com
+typo_transposition	microsfot.com		typo:danger:microsoft.com
+typo_transposition	ogogle.com		typo:danger:google.com
+typo_transposition	amazno.com		typo:danger:amazon.com
+visual_i_for_1	m1crosoft.com		typo:danger:microsoft.com
+visual_i_for_1	netfl1x.com		typo:danger:netflix.com
+visual_i_for_1	spot1fy.com		typo:danger:spotify.com
+visual_pair	rnicrosoft.com		visual_pair:danger:microsoft.com
+visual_pair	micr0soft.com		visual_pair:danger:microsoft.com
+visual_pair	goog1e.com		visual_pair:danger:google.com,visual_pair:danger:google.it.ao,visual_pair:danger:google.net,visual_pair:danger:google.co.uk,visual_pair:danger:google.de,visual_pair:danger:google.fr,visual_pair:danger:google.co.in,visual_pair:danger:google.co.jp,visual_pair:danger:google.com.br,visual_pair:danger:google.ca,visual_pair:danger:google.com.au,visual_pair:danger:google.es,visual_pair:danger:google.it,visual_pair:danger:google.nl

@@ -1,0 +1,232 @@
+rule	redirectors	google	^(www\.)?google\.[a-z.]{2,6}$	^/url$	q,url	
+rule	redirectors	safelinks	\.safelinks\.protection\.outlook\.com$		url	
+rule	redirectors	proofpoint-v2	^urldefense\.proofpoint\.com$	^/v2/url$	u	proofpoint-v2
+rule	redirectors	proofpoint-v3	^urldefense\.com$	^/v3/__		proofpoint-v3
+rule	redirectors	facebook	^(l|lm)\.facebook\.com$	^/l\.php$	u	
+rule	redirectors	instagram	^l\.instagram\.com$		u	
+rule	redirectors	youtube	^(www\.)?youtube\.com$	^/redirect$	q	
+rule	redirectors	linkedin	^(www\.)?linkedin\.com$	^/(redir/redirect|slink)$	url	
+rule	redirectors	slack	^slack-redir\.net$	^/link$	url	
+rule	redirectors	barracuda	^linkprotect\.cudasvc\.com$	^/url$	a	
+rule	redirectors	tumblr	^t\.umblr\.com$	^/redirect$	z	
+rule	redirectors	vk	^(away\.)?vk\.com$	^/away\.php$	to	
+rule	redirectors	substack	^substack\.com$	^/redirect/		
+rule	redirectors	bing	^(www\.)?bing\.com$	^/ck/a$	u	bing
+rule	oauth_endpoints	microsoft	^login\.microsoftonline\.com$	^/[^/]+/(oauth2/(v2\.0/)?authorize|v2\.0/adminconsent|adminconsent)		
+rule	oauth_endpoints	microsoft	^login\.live\.com$	^/oauth20_authorize\.srf		
+rule	oauth_endpoints	google	^accounts\.google\.com$	^/(o/oauth2/(v2/)?auth|signin/oauth)		
+rule	oauth_endpoints	github	^github\.com$	^/login/oauth/authorize		
+rule	oauth_endpoints	slack	^([a-z0-9-]+\.)?slack\.com$	^/oauth/(v2/)?authorize		
+rule	oauth_endpoints	apple	^appleid\.apple\.com$	^/auth/authorize		
+rule	oauth_endpoints	dropbox	^(www\.)?dropbox\.com$	^/oauth2/authorize		
+rule	oauth_endpoints	zoom	^zoom\.us$	^/oauth/authorize		
+rule	oauth_endpoints	salesforce	^(login|test)\.salesforce\.com$	^/services/oauth2/authorize		
+rule	oauth_endpoints	facebook	^(www\.)?facebook\.com$	^/(v[0-9.]+/)?dialog/oauth		
+rule	oauth_endpoints	x	^(x|twitter)\.com$	^/i/oauth2/authorize		
+rule	oauth_endpoints	atlassian	^auth\.atlassian\.com$	^/authorize		
+rule	device_login	microsoft	^(www\.)?microsoft\.com$	^/([a-z]{2}-[a-z]{2}/)?devicelogin		
+rule	device_login	microsoft	^aka\.ms$	^/devicelogin		
+rule	device_login	microsoft	^login\.microsoftonline\.com$	^/(common|organizations|consumers|[^/]+)/oauth2/deviceauth		
+rule	device_login	microsoft	^login\.microsoft\.com$	^/device		
+rule	device_login	microsoft	^login\.live\.com$	^/oauth20_remoteconnect\.srf		
+rule	device_login	google	^(www\.)?google\.com$	^/device		
+rule	device_login	github	^github\.com$	^/login/device		
+item	generic_redirect_params	url
+item	generic_redirect_params	u
+item	generic_redirect_params	q
+item	generic_redirect_params	redirect
+item	generic_redirect_params	redirect_url
+item	generic_redirect_params	redirecturl
+item	generic_redirect_params	target
+item	generic_redirect_params	dest
+item	generic_redirect_params	destination
+item	generic_redirect_params	goto
+item	generic_redirect_params	link
+item	generic_redirect_params	to
+item	generic_redirect_params	r
+item	generic_redirect_params	next
+item	generic_redirect_params	continue
+item	generic_redirect_params	return
+item	generic_redirect_params	returnurl
+item	esp_trackers	sendgrid.net
+item	esp_trackers	list-manage.com
+item	esp_trackers	mcsv.net
+item	esp_trackers	mailchimp.com
+item	esp_trackers	rs6.net
+item	esp_trackers	createsend.com
+item	esp_trackers	createsend1.com
+item	esp_trackers	cmail19.com
+item	esp_trackers	cmail20.com
+item	esp_trackers	exct.net
+item	esp_trackers	mkt.com
+item	esp_trackers	mktoweb.com
+item	esp_trackers	mktossl.com
+item	esp_trackers	hubspotlinks.com
+item	esp_trackers	hubspotemail.net
+item	esp_trackers	hs-sites.com
+item	esp_trackers	mailgun.org
+item	esp_trackers	mailgun.net
+item	esp_trackers	spgo.io
+item	esp_trackers	sparkpostmail.com
+item	esp_trackers	awstrack.me
+item	esp_trackers	klclick.com
+item	esp_trackers	klclick1.com
+item	esp_trackers	klclick2.com
+item	esp_trackers	klclick3.com
+item	esp_trackers	klaviyomail.com
+item	esp_trackers	mandrillapp.com
+item	esp_trackers	pstmrk.it
+item	esp_trackers	customeriomail.com
+item	esp_trackers	mjt.lu
+item	esp_trackers	sendibt2.com
+item	esp_trackers	sendibt3.com
+item	esp_trackers	sendibm1.com
+item	esp_trackers	brevo.com
+item	esp_trackers	convertkit-mail.com
+item	esp_trackers	convertkit-mail2.com
+item	esp_trackers	beehiiv.com
+item	esp_trackers	mailerlite.com
+item	esp_trackers	mlsend.com
+item	esp_trackers	aweber.com
+item	esp_trackers	getresponse.com
+item	esp_trackers	constantcontact.com
+item	esp_trackers	salesforce.com
+item	esp_trackers	pardot.com
+item	esp_trackers	eloqua.com
+item	esp_trackers	emarsys.net
+item	esp_trackers	sailthru.com
+item	esp_trackers	responsys.net
+item	esp_trackers	bmetrack.com
+item	esp_trackers	intercom-mail.com
+item	esp_trackers	intercom-clicks.com
+item	esp_trackers	mailjet.com
+item	esp_trackers	zendesk.com
+item	shorteners	bit.ly
+item	shorteners	bitly.com
+item	shorteners	j.mp
+item	shorteners	tinyurl.com
+item	shorteners	t.co
+item	shorteners	goo.gl
+item	shorteners	ow.ly
+item	shorteners	is.gd
+item	shorteners	v.gd
+item	shorteners	buff.ly
+item	shorteners	rebrand.ly
+item	shorteners	cutt.ly
+item	shorteners	shorturl.at
+item	shorteners	rb.gy
+item	shorteners	tiny.cc
+item	shorteners	t.ly
+item	shorteners	s.id
+item	shorteners	bl.ink
+item	shorteners	qrco.de
+item	shorteners	shorte.st
+item	shorteners	adf.ly
+item	shorteners	soo.gd
+item	shorteners	x.co
+item	shorteners	tr.im
+item	shorteners	cli.gs
+item	shorteners	short.io
+item	shorteners	urlz.fr
+item	shorteners	surl.li
+item	shorteners	u.to
+item	shorteners	clck.ru
+item	shorteners	bit.do
+item	shorteners	2u.pw
+item	shorteners	tiny.one
+item	shorteners	shorturl.gg
+item	shorteners	lnk.to
+item	shorteners	t2m.io
+item	shorteners	urlr.me
+item	shorteners	rebrandly.com
+item	shorteners	tinu.be
+item	shorteners	gg.gg
+item	shorteners	did.li
+item	shorteners	kutt.it
+item	user_content_hosts	pages.dev
+item	user_content_hosts	workers.dev
+item	user_content_hosts	r2.dev
+item	user_content_hosts	web.app
+item	user_content_hosts	firebaseapp.com
+item	user_content_hosts	firebasestorage.googleapis.com
+item	user_content_hosts	storage.googleapis.com
+item	user_content_hosts	appspot.com
+item	user_content_hosts	docs.google.com
+item	user_content_hosts	sites.google.com
+item	user_content_hosts	drive.google.com
+item	user_content_hosts	forms.gle
+item	user_content_hosts	script.google.com
+item	user_content_hosts	googleusercontent.com
+item	user_content_hosts	sharepoint.com
+item	user_content_hosts	onedrive.live.com
+item	user_content_hosts	1drv.ms
+item	user_content_hosts	blob.core.windows.net
+item	user_content_hosts	web.core.windows.net
+item	user_content_hosts	azurewebsites.net
+item	user_content_hosts	azureedge.net
+item	user_content_hosts	z13.web.core.windows.net
+item	user_content_hosts	github.io
+item	user_content_hosts	gitlab.io
+item	user_content_hosts	raw.githubusercontent.com
+item	user_content_hosts	gist.github.com
+item	user_content_hosts	netlify.app
+item	user_content_hosts	vercel.app
+item	user_content_hosts	herokuapp.com
+item	user_content_hosts	glitch.me
+item	user_content_hosts	replit.app
+item	user_content_hosts	repl.co
+item	user_content_hosts	wixsite.com
+item	user_content_hosts	weebly.com
+item	user_content_hosts	webflow.io
+item	user_content_hosts	square.site
+item	user_content_hosts	godaddysites.com
+item	user_content_hosts	blogspot.com
+item	user_content_hosts	wordpress.com
+item	user_content_hosts	000webhostapp.com
+item	user_content_hosts	notion.site
+item	user_content_hosts	canva.site
+item	user_content_hosts	my.canva.site
+item	user_content_hosts	s3.amazonaws.com
+item	user_content_hosts	amazonaws.com
+item	user_content_hosts	cloudfront.net
+item	user_content_hosts	dropbox.com
+item	user_content_hosts	dropboxusercontent.com
+item	user_content_hosts	dl.dropboxusercontent.com
+item	user_content_hosts	box.com
+item	user_content_hosts	app.box.com
+item	user_content_hosts	wetransfer.com
+item	user_content_hosts	we.tl
+item	user_content_hosts	typeform.com
+item	user_content_hosts	jotform.com
+item	user_content_hosts	formstack.com
+item	user_content_hosts	surveymonkey.com
+item	user_content_hosts	ipfs.io
+item	user_content_hosts	dweb.link
+item	user_content_hosts	cloudflare-ipfs.com
+item	user_content_hosts	linktr.ee
+item	user_content_hosts	carrd.co
+item	user_content_hosts	framer.app
+item	user_content_hosts	framer.website
+item	user_content_hosts	mystrikingly.com
+item	user_content_hosts	yolasite.com
+item	user_content_hosts	jimdosite.com
+item	user_content_hosts	ukit.me
+item	user_content_hosts	tilda.ws
+item	user_content_hosts	zohopublic.com
+item	user_content_hosts	zoho.com
+item	user_content_hosts	airtable.com
+item	user_content_hosts	figma.com
+item	user_content_hosts	padlet.com
+item	user_content_hosts	sway.office.com
+item	user_content_hosts	forms.office.com
+item	user_content_hosts	forms.microsoft.com
+item	user_content_hosts	onenote.com
+item	user_content_hosts	quip.com
+item	user_content_hosts	smartsheet.com
+item	user_content_hosts	miro.com
+item	user_content_hosts	codepen.io
+item	user_content_hosts	codesandbox.io
+item	user_content_hosts	trycloudflare.com
+item	user_content_hosts	ngrok.io
+item	user_content_hosts	ngrok-free.app
+item	user_content_hosts	ngrok.app

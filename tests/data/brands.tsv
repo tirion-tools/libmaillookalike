@@ -1,0 +1,220 @@
+# Spike brand list: commonly impersonated services. Columns (tab-separated):
+# id  display names (|)  registrable domains owned (|)  domain tokens (|, '-' = none)  flags (generic = the name is
+# also an ordinary word or surname: display-name match only on whole-name equality / name + service words)
+# Domains are the brand's primary domains plus major country variants; this is spike data, not the shipped list.
+microsoft	Microsoft|Microsoft 365|Office 365|Microsoft Account|Microsoft Teams|OneDrive|SharePoint|Outlook	microsoft.com|office.com|office365.com|live.com|outlook.com|hotmail.com|onedrive.com|sharepoint.com|microsoftonline.com|azure.com|windows.com|msn.com|bing.com|skype.com|xbox.com	microsoft|office365|onedrive|sharepoint|outlook|microsoftonline	-
+google	Google|Gmail|Google Drive|Google Workspace|Google Docs|YouTube	google.com|gmail.com|googlemail.com|youtube.com|google.co.uk|google.de|google.fr|google.co.in|google.co.jp|google.com.br|google.ca|google.com.au|google.es|google.it|google.nl|withgoogle.com|googleusercontent.com	google|gmail|youtube	-
+apple	Apple|Apple ID|iCloud|App Store|Apple Pay|iTunes	apple.com|icloud.com|me.com|mac.com|itunes.com|apple.co	icloud|itunes|appleid	generic
+amazon	Amazon|Amazon.com|Amazon Prime|Prime Video|AWS|Amazon Web Services	amazon.com|amazon.co.uk|amazon.de|amazon.fr|amazon.it|amazon.es|amazon.ca|amazon.co.jp|amazon.in|amazon.com.au|amazon.com.br|amazon.nl|amazon.com.mx|amazonaws.com|aws.amazon.com|primevideo.com|amazon.jobs	amazon|primevideo|amazonaws	-
+meta	Meta|Facebook|Instagram|WhatsApp|Messenger	meta.com|facebook.com|fb.com|facebookmail.com|instagram.com|whatsapp.com|whatsapp.net|messenger.com	facebook|instagram|whatsapp	-
+netflix	Netflix	netflix.com	netflix	-
+spotify	Spotify	spotify.com	spotify	-
+adobe	Adobe|Adobe Acrobat|Adobe Sign|Adobe Document Cloud	adobe.com|adobesign.com|echosign.com	adobe	-
+docusign	DocuSign	docusign.com|docusign.net	docusign	-
+dropbox	Dropbox|Dropbox Sign|HelloSign	dropbox.com|dropboxmail.com|hellosign.com	dropbox|hellosign	-
+box	Box	box.com	-	generic
+wetransfer	WeTransfer	wetransfer.com	wetransfer	-
+zoom	Zoom|Zoom Video	zoom.us|zoom.com	-	generic
+slack	Slack	slack.com	-	generic
+salesforce	Salesforce	salesforce.com|force.com	salesforce	-
+intuit	Intuit|QuickBooks|TurboTax|Mailchimp|Credit Karma	intuit.com|quickbooks.com|turbotax.com|mailchimp.com|creditkarma.com	intuit|quickbooks|turbotax|mailchimp|creditkarma	-
+paypal	PayPal	paypal.com|paypal.me|paypal-communication.com	paypal	-
+venmo	Venmo	venmo.com	venmo	-
+stripe	Stripe	stripe.com	-	generic
+square	Square|Square Up	squareup.com|square.com	squareup	generic
+coinbase	Coinbase	coinbase.com	coinbase	-
+binance	Binance	binance.com	binance	-
+kraken	Kraken	kraken.com	-	generic
+metamask	MetaMask	metamask.io	metamask	-
+ledger	Ledger	ledger.com	-	generic
+trezor	Trezor	trezor.io	trezor	-
+ebay	eBay	ebay.com|ebay.co.uk|ebay.de|ebay.fr|ebay.it|ebay.com.au|ebay.ca	ebay	-
+alibaba	Alibaba|AliExpress|Alipay	alibaba.com|aliexpress.com|alipay.com	alibaba|aliexpress|alipay	-
+walmart	Walmart	walmart.com	walmart	-
+target	Target	target.com	-	generic
+costco	Costco	costco.com	costco	-
+bestbuy	Best Buy	bestbuy.com	bestbuy	-
+homedepot	The Home Depot|Home Depot	homedepot.com	homedepot	-
+ikea	IKEA	ikea.com	-	-
+dhl	DHL|DHL Express	dhl.com|dhl.de|dhl.co.uk|dhl.fr|dhl.nl	-	-
+fedex	FedEx	fedex.com	fedex	-
+ups	UPS	ups.com	-	-
+usps	USPS|US Postal Service|United States Postal Service	usps.com|usps.gov	-	-
+royalmail	Royal Mail	royalmail.com|royalmail.co.uk	royalmail	-
+canadapost	Canada Post|Postes Canada	canadapost.ca|canadapost-postescanada.ca	canadapost	-
+auspost	Australia Post	auspost.com.au	auspost	-
+laposte	La Poste|Colissimo	laposte.fr|laposte.net|colissimo.fr	laposte|colissimo	-
+deutschepost	Deutsche Post	deutschepost.de	deutschepost	-
+postnl	PostNL	postnl.nl	postnl	-
+correos	Correos	correos.es	correos	-
+posteitaliane	Poste Italiane	poste.it	posteitaliane	-
+evri	Evri|Hermes	evri.com	-	-
+dpd	DPD	dpd.com|dpd.co.uk|dpd.de	-	-
+gls	GLS	gls-group.com|gls-group.eu	-	-
+chase	Chase|JPMorgan Chase|Chase Bank	chase.com|jpmorganchase.com|jpmorgan.com	jpmorgan	generic
+bankofamerica	Bank of America|BofA	bankofamerica.com|bofa.com	bankofamerica	-
+wellsfargo	Wells Fargo	wellsfargo.com	wellsfargo	-
+citi	Citi|Citibank	citi.com|citibank.com|citigroup.com	citibank	-
+capitalone	Capital One	capitalone.com	capitalone	-
+hsbc	HSBC	hsbc.com|hsbc.co.uk|hsbc.com.hk|us.hsbc.com	-	-
+barclays	Barclays	barclays.com|barclays.co.uk|barclaycard.co.uk	barclays|barclaycard	-
+lloyds	Lloyds Bank|Lloyds	lloydsbank.com|lloydsbank.co.uk|lloydsbankinggroup.com	lloydsbank	-
+natwest	NatWest	natwest.com	natwest	-
+santander	Santander	santander.com|santander.co.uk|santander.es|santanderbank.com	santander	-
+bbva	BBVA	bbva.com|bbva.es|bbva.mx	-	-
+ing	ING	ing.com|ing.nl|ing.de|ing.be|ing.es	-	-
+deutschebank	Deutsche Bank	db.com|deutsche-bank.de	deutschebank|deutsche-bank	-
+commerzbank	Commerzbank	commerzbank.de|commerzbank.com	commerzbank	-
+sparkasse	Sparkasse	sparkasse.de	sparkasse	-
+bnpparibas	BNP Paribas	bnpparibas.com|bnpparibas.fr|mabanque.bnpparibas	bnpparibas	-
+socgen	Société Générale	societegenerale.com|societegenerale.fr|sg.fr	societegenerale	-
+creditagricole	Crédit Agricole	credit-agricole.fr|credit-agricole.com|ca-cib.com	creditagricole|credit-agricole	-
+ubs	UBS	ubs.com	-	-
+abnamro	ABN AMRO	abnamro.nl|abnamro.com	abnamro	-
+rabobank	Rabobank	rabobank.nl|rabobank.com	rabobank	-
+revolut	Revolut	revolut.com	revolut	-
+n26	N26	n26.com	-	-
+monzo	Monzo	monzo.com	monzo	-
+wise	Wise|TransferWise	wise.com|transferwise.com	transferwise	generic
+amex	American Express|Amex	americanexpress.com|aexp.com	americanexpress	-
+visa	Visa	visa.com	-	generic
+mastercard	Mastercard	mastercard.com	mastercard	-
+discover	Discover	discover.com	-	generic
+usbank	U.S. Bank|US Bank	usbank.com	usbank	-
+pnc	PNC|PNC Bank	pnc.com	-	-
+tdbank	TD Bank|TD	td.com|tdbank.com	tdbank	-
+rbc	RBC|RBC Royal Bank|Royal Bank of Canada	rbc.com|rbcroyalbank.com	rbcroyalbank	-
+scotiabank	Scotiabank	scotiabank.com	scotiabank	-
+bmo	BMO|Bank of Montreal	bmo.com	-	-
+cibc	CIBC	cibc.com	-	-
+commbank	CommBank|Commonwealth Bank	commbank.com.au	commbank	-
+westpac	Westpac	westpac.com.au	westpac	-
+anz	ANZ	anz.com|anz.com.au	-	-
+nab	NAB|National Australia Bank	nab.com.au	-	-
+stanchart	Standard Chartered	sc.com|standardchartered.com	standardchartered	-
+sbi	SBI|State Bank of India	sbi.co.in|onlinesbi.sbi|onlinesbi.com	onlinesbi	-
+icici	ICICI Bank	icicibank.com	icicibank	-
+hdfc	HDFC Bank	hdfcbank.com	hdfcbank	-
+axis	Axis Bank	axisbank.com	axisbank	-
+irs	IRS|Internal Revenue Service	irs.gov	-	-
+hmrc	HMRC|HM Revenue & Customs|HM Revenue and Customs	hmrc.gov.uk|gov.uk	-	-
+ssa	Social Security Administration	ssa.gov	-	-
+medicare	Medicare	medicare.gov	medicare	-
+ato	Australian Taxation Office|ATO	ato.gov.au	-	-
+cra	Canada Revenue Agency|CRA	canada.ca|cra-arc.gc.ca	-	-
+steam	Steam|Valve|Steam Support	steampowered.com|steamcommunity.com	steampowered|steamcommunity	generic
+epicgames	Epic Games	epicgames.com	epicgames	-
+roblox	Roblox	roblox.com	roblox	-
+discord	Discord	discord.com|discordapp.com	discord	-
+twitch	Twitch	twitch.tv	twitch	-
+x	X|Twitter	x.com|twitter.com	twitter	-
+tiktok	TikTok	tiktok.com	tiktok	-
+snapchat	Snapchat	snapchat.com	snapchat	-
+telegram	Telegram	telegram.org	telegram	-
+yahoo	Yahoo|Yahoo Mail	yahoo.com|yahoo.co.jp|yahoo.co.uk|yahoomail.com|aol.com	yahoo	-
+proton	Proton|Proton Mail|ProtonMail	proton.me|protonmail.com	protonmail	-
+godaddy	GoDaddy	godaddy.com	godaddy	-
+namecheap	Namecheap	namecheap.com	namecheap	-
+cloudflare	Cloudflare	cloudflare.com	cloudflare	-
+github	GitHub	github.com|githubusercontent.com	github	-
+gitlab	GitLab	gitlab.com	gitlab	-
+atlassian	Atlassian|Jira|Confluence|Bitbucket|Trello	atlassian.com|atlassian.net|bitbucket.org|trello.com	atlassian|bitbucket|trello	-
+okta	Okta	okta.com|oktapreview.com	-	-
+duo	Duo|Duo Security	duo.com|duosecurity.com	duosecurity	generic
+norton	Norton|NortonLifeLock|Gen Digital	norton.com|nortonlifelock.com	nortonlifelock	generic
+mcafee	McAfee	mcafee.com	mcafee	-
+avast	Avast	avast.com	-	-
+kaspersky	Kaspersky	kaspersky.com	kaspersky	-
+booking	Booking.com	booking.com	-	generic
+airbnb	Airbnb	airbnb.com	airbnb	-
+expedia	Expedia	expedia.com	expedia	-
+uber	Uber	uber.com	-	-
+lyft	Lyft	lyft.com	-	-
+doordash	DoorDash	doordash.com	doordash	-
+delta	Delta|Delta Air Lines	delta.com	-	generic
+united	United Airlines	united.com	unitedairlines	-
+aa	American Airlines	aa.com|americanairlines.com	americanairlines	-
+emirates	Emirates	emirates.com	-	generic
+lufthansa	Lufthansa	lufthansa.com	lufthansa	-
+ba	British Airways	britishairways.com|ba.com	britishairways	-
+ryanair	Ryanair	ryanair.com	ryanair	-
+verizon	Verizon	verizon.com|verizonwireless.com|verizon.net	verizon	-
+att	AT&T	att.com|att.net	-	-
+tmobile	T-Mobile	t-mobile.com	t-mobile|tmobile	-
+xfinity	Xfinity|Comcast	xfinity.com|comcast.com|comcast.net	xfinity|comcast	-
+vodafone	Vodafone	vodafone.com|vodafone.co.uk|vodafone.de	vodafone	-
+orange	Orange	orange.com|orange.fr	-	generic
+o2	O2	o2.co.uk|o2online.de	-	-
+bt	BT	bt.com	-	-
+sky	Sky	sky.com	-	generic
+disney	Disney+|Disney Plus|Disney	disney.com|disneyplus.com	disneyplus	-
+hulu	Hulu	hulu.com	-	-
+hbomax	HBO Max	max.com|hbomax.com	hbomax	-
+shopify	Shopify	shopify.com|myshopify.com	shopify	-
+etsy	Etsy	etsy.com	-	-
+mercadolibre	Mercado Libre|Mercado Pago	mercadolibre.com|mercadolibre.com.mx|mercadopago.com	mercadolibre|mercadopago	-
+rakuten	Rakuten	rakuten.com|rakuten.co.jp	rakuten	-
+samsung	Samsung	samsung.com	samsung	-
+playstation	PlayStation|Sony	playstation.com|sony.com	playstation	-
+nintendo	Nintendo	nintendo.com	nintendo	-
+webex	Webex|Cisco Webex	webex.com|cisco.com	webex	-
+zoho	Zoho	zoho.com|zoho.eu	-	-
+constantcontact	Constant Contact	constantcontact.com	constantcontact	-
+sendgrid	SendGrid|Twilio	sendgrid.com|sendgrid.net|twilio.com	sendgrid	-
+indeed	Indeed	indeed.com	-	generic
+linkedin	LinkedIn	linkedin.com	linkedin	-
+workday	Workday	workday.com|myworkday.com	-	generic
+adp	ADP	adp.com	-	-
+paychex	Paychex	paychex.com	paychex	-
+gusto	Gusto	gusto.com	-	generic
+zelle	Zelle	zellepay.com	zellepay	-
+cashapp	Cash App	cash.app|cash.me	cashapp	-
+westernunion	Western Union	westernunion.com	westernunion	-
+moneygram	MoneyGram	moneygram.com	moneygram	-
+klarna	Klarna	klarna.com	klarna	-
+afterpay	Afterpay	afterpay.com	afterpay	-
+affirm	Affirm	affirm.com	-	generic
+chime	Chime	chime.com	-	generic
+robinhood	Robinhood	robinhood.com	robinhood	-
+fidelity	Fidelity|Fidelity Investments	fidelity.com	-	generic
+vanguard	Vanguard	vanguard.com	-	generic
+schwab	Charles Schwab|Schwab	schwab.com	schwab	-
+etrade	E*TRADE	etrade.com	-	-
+ally	Ally|Ally Bank	ally.com	-	generic
+navyfederal	Navy Federal|Navy Federal Credit Union	navyfederal.org	navyfederal	-
+truist	Truist	truist.com	truist	-
+regions	Regions Bank	regions.com	-	-
+key	KeyBank	key.com	keybank	-
+nordea	Nordea	nordea.com|nordea.fi|nordea.se	nordea	-
+danske	Danske Bank	danskebank.com|danskebank.dk	danskebank	-
+swedbank	Swedbank	swedbank.se|swedbank.com	swedbank	-
+postfinance	PostFinance	postfinance.ch	postfinance	-
+raiffeisen	Raiffeisen	raiffeisen.ch|raiffeisen.at|rbinternational.com	raiffeisen	-
+intesa	Intesa Sanpaolo	intesasanpaolo.com	intesasanpaolo	-
+unicredit	UniCredit	unicredit.it|unicreditgroup.eu	unicredit	-
+caixabank	CaixaBank	caixabank.es|caixabank.com	caixabank	-
+itau	Itaú	itau.com.br	-	-
+bradesco	Bradesco	bradesco.com.br	bradesco	-
+nubank	Nubank	nubank.com.br	nubank	-
+mufg	MUFG	mufg.jp	-	-
+dbs	DBS|DBS Bank	dbs.com|dbs.com.sg	-	-
+ocbc	OCBC	ocbc.com	-	-
+maybank	Maybank	maybank.com|maybank2u.com.my	maybank	-
+kbc	KBC	kbc.be|kbc.com	-	-
+belfius	Belfius	belfius.be	belfius	-
+openai	OpenAI|ChatGPT	openai.com|chatgpt.com	openai|chatgpt	-
+notion	Notion	notion.so|notion.com	-	generic
+canva	Canva	canva.com	-	-
+figma	Figma	figma.com	-	-
+asana	Asana	asana.com	-	-
+hubspot	HubSpot	hubspot.com	hubspot	-
+squarespace	Squarespace	squarespace.com	squarespace	-
+wix	Wix	wix.com	-	-
+wordpress	WordPress|WordPress.com	wordpress.com|wordpress.org	wordpress	-
+ionos	IONOS|1&1 IONOS	ionos.com|ionos.de	-	-
+ovh	OVHcloud|OVH	ovh.com|ovhcloud.com	ovhcloud	-
+hetzner	Hetzner	hetzner.com	hetzner	-
+digitalocean	DigitalOcean	digitalocean.com	digitalocean	-
+lastpass	LastPass	lastpass.com	lastpass	-
+onepassword	1Password	1password.com	1password	-
+bitwarden	Bitwarden	bitwarden.com	bitwarden	-

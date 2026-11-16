@@ -1,4 +1,4 @@
-// Lookalike engine (see lookalike.h). The Public Suffix List is a small matcher over the caller's pinned list text.
+// Lookalike engine (see lookalike.h). Registrable domains come from libpsl over the caller's pinned list (psl.h).
 //
 // The IDN display decision (SafeToDisplayAsUnicode, the whole-script confusable table, the dangerous-pattern
 // regex, the allowed character set and the skeleton supplements) is a port of Chromium 156.0.8078.88
@@ -310,86 +310,6 @@ struct NameIndex {
   }
 };
 
-// The Public Suffix List (ICANN and private sections, as libpsl PSL_TYPE_ANY): exact, wildcard and exception
-// rules in lower-case ACE, plus the implicit "*" rule for registrable_domain().
-class SuffixList {
- public:
-  bool load(std::string_view text, UIDNA* idna) {
-    size_t pos = 0;
-    while (pos < text.size()) {
-      size_t nl = text.find('\n', pos);
-      if (nl == std::string_view::npos) nl = text.size();
-      std::string_view line = text.substr(pos, nl - pos);
-      pos = nl + 1;
-      const size_t end = line.find_first_of(" \t\r");
-      if (end != std::string_view::npos) line = line.substr(0, end);
-      if (line.empty() || line.substr(0, 2) == "//") continue;
-      std::string rule;
-      bool exception = false;
-      bool wildcard = false;
-      if (line[0] == '!') {
-        exception = true;
-        line.remove_prefix(1);
-      } else if (line.substr(0, 2) == "*.") {
-        wildcard = true;
-        line.remove_prefix(2);
-      }
-      if (!to_ace(line, idna, &rule)) continue;
-      (exception ? exceptions_ : wildcard ? wildcards_ : exact_).insert(std::move(rule));
-    }
-    return exact_.size() > 1000;
-  }
-  // libpsl psl_is_public_suffix2(PSL_TYPE_ANY | PSL_TYPE_NO_STAR_RULE): listed by an explicit rule.
-  bool listed(std::string_view suffix) const {
-    const std::string s(suffix);
-    if (exact_.count(s) != 0) return true;
-    const size_t dot = s.find('.');
-    return dot != std::string::npos && wildcards_.count(s.substr(dot + 1)) != 0 && exceptions_.count(s) == 0;
-  }
-  // libpsl psl_registrable_domain: the public suffix (longest rule, exceptions first, implicit "*") plus one
-  // label; empty when the host is itself a public suffix.
-  std::string registrable(std::string_view host) const {
-    if (host.empty() || host.front() == '.' || host.back() == '.') return {};
-    std::vector<size_t> starts{0};
-    for (size_t i = 0; i < host.size(); ++i)
-      if (host[i] == '.') starts.push_back(i + 1);
-    const size_t n = starts.size();
-    size_t suffix_labels = 1;  // the implicit "*" rule
-    for (size_t i = 0; i < n; ++i) {
-      const std::string s(host.substr(starts[i]));
-      const size_t labels = n - i;
-      if (exceptions_.count(s) != 0) {
-        suffix_labels = labels - 1;
-        break;  // an exception rule always prevails
-      }
-      if (labels > suffix_labels &&
-          (exact_.count(s) != 0 || (i + 1 < n && wildcards_.count(std::string(host.substr(starts[i + 1]))) != 0)))
-        suffix_labels = labels;
-    }
-    if (n <= suffix_labels) return {};
-    return std::string(host.substr(starts[n - suffix_labels - 1]));
-  }
-  size_t bytes() const { return (exact_.size() + wildcards_.size() + exceptions_.size()) * 48; }
-
- private:
-  static bool to_ace(std::string_view rule, UIDNA* idna, std::string* out) {
-    bool ascii = true;
-    for (char c : rule) ascii = ascii && static_cast<unsigned char>(c) < 0x80;
-    if (ascii) {
-      *out = ascii_lower(rule);
-      return !out->empty();
-    }
-    char buf[256];
-    UErrorCode st = U_ZERO_ERROR;
-    UIDNAInfo info = UIDNA_INFO_INITIALIZER;
-    const int32_t len = uidna_nameToASCII_UTF8(idna, rule.data(), int32_t(rule.size()), buf, sizeof buf, &info, &st);
-    if (U_FAILURE(st) || info.errors != 0 || len <= 0 || len >= int32_t(sizeof buf)) return false;
-    *out = ascii_lower(std::string_view(buf, size_t(len)));
-    return true;
-  }
-  std::unordered_set<std::string> exact_, wildcards_, exceptions_;
-};
-
 const std::set<std::u32string>& service_words() {
   static const std::set<std::u32string> words = {
       U"support", U"team", U"billing", U"security", U"service", U"services", U"account", U"accounts",
@@ -411,7 +331,7 @@ class EngineImpl final : public Engine {
     if (sc_name_) uspoof_close(sc_name_);
   }
 
-  bool init(std::string_view psl_text, std::string* error);
+  bool init(std::shared_ptr<const Psl> psl, std::string* error);
   void set_profile(const Profile& p) override;
   HostReport check_host(std::string_view host) const override;
   NameReport check_display_name(std::string_view display_name, std::string_view address,
@@ -490,7 +410,7 @@ class EngineImpl final : public Engine {
   }
 
   Options opt_;
-  SuffixList psl_;
+  std::shared_ptr<const Psl> psl_;
   UIDNA* idna_ = nullptr;
   USpoofChecker* sc_ = nullptr;       // Chromium-configured checker (IDN display)
   USpoofChecker* sc_name_ = nullptr;  // restriction-level checker for display names
@@ -539,13 +459,14 @@ class EngineImpl final : public Engine {
   size_t max_lure_len_ = 0;
 };
 
-bool EngineImpl::init(std::string_view psl_text, std::string* error) {
+bool EngineImpl::init(std::shared_ptr<const Psl> psl, std::string* error) {
   UErrorCode st = U_ZERO_ERROR;
+  psl_ = std::move(psl);
   idna_ = uidna_openUTS46(UIDNA_CHECK_BIDI | UIDNA_CHECK_CONTEXTJ | UIDNA_NONTRANSITIONAL_TO_ASCII |
                               UIDNA_NONTRANSITIONAL_TO_UNICODE,
                           &st);
-  if (U_FAILURE(st) || !psl_.load(psl_text, idna_)) {
-    *error = "the public suffix list could not be loaded";
+  if (U_FAILURE(st) || !psl_) {
+    *error = psl_ ? "ICU UTS #46 is not available" : "no public suffix list";
     return false;
   }
   nfkc_cf_ = icu::Normalizer2::getNFKCCasefoldInstance(st);
@@ -898,7 +819,7 @@ std::string EngineImpl::ace_to_unicode_name(const std::string& ace) const {
 
 std::string EngineImpl::registrable_domain(std::string_view ace_host) const {
   std::string h = ascii_lower(ace_host);
-  return psl_.registrable(h);
+  return psl_->registrable(h);
 }
 
 std::string EngineImpl::registrable_of_address(std::string_view address) const {
@@ -1697,7 +1618,7 @@ NameReport EngineImpl::check_display_name(std::string_view display_name, std::st
       std::string reg = registrable_domain(ace);
       if (reg.empty()) continue;
       std::string suf = suffix_of(reg);
-      if (suf.empty() || !psl_.listed(suf)) continue;
+      if (suf.empty() || !psl_->listed(suf)) continue;
       if (reg == sender_reg) continue;
       // An address in the name that is not the sender's is danger (P3). A bare domain-shaped token is only a
       // caution: newsletters name their site ("CNET News.com") while sending from an ESP domain, and initials
@@ -1754,9 +1675,9 @@ Severity NameReport::severity() const {
   return s;
 }
 
-std::unique_ptr<Engine> Engine::create(std::string_view psl_text, const Options& options, std::string* error) {
+std::unique_ptr<Engine> Engine::create(std::shared_ptr<const Psl> psl, const Options& options, std::string* error) {
   auto e = std::make_unique<EngineImpl>(options);
-  if (!e->init(psl_text, error)) return nullptr;
+  if (!e->init(std::move(psl), error)) return nullptr;
   return e;
 }
 

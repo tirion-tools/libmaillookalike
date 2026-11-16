@@ -16,6 +16,8 @@
 #include <string_view>
 #include <vector>
 
+#include "maillookalike/psl.h"
+
 namespace maillookalike {
 
 enum class Severity : uint8_t { None = 0, Caution = 1, Danger = 2 };
@@ -152,8 +154,8 @@ struct SenderReport {
 
 class Engine {
  public:
-  // psl_text: the pinned public_suffix_list.dat (ICANN + private sections), the list the caller's other components use.
-  static std::unique_ptr<Engine> create(std::string_view psl_text, const Options& options, std::string* error);
+  // psl: the caller's pinned Public Suffix List (psl.h), shared with the link checks.
+  static std::unique_ptr<Engine> create(std::shared_ptr<const Psl> psl, const Options& options, std::string* error);
   virtual ~Engine() = default;
 
   // Rebuilds every index; O(contacts + brands). Call again when contacts change.
