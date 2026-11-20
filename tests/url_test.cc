@@ -53,3 +53,16 @@ TEST(Url, PercentDecodeKeepsInvalidEscapes) {
   EXPECT_EQ(ml::percent_decode("%FF%41"), "%FFA");
   EXPECT_EQ(ml::percent_decode("%zz%4"), "%zz%4");
 }
+
+TEST(Url, PercentEncodedHostWithForbiddenCodePointFails) {
+  // WHATWG host parsing: percent-decode, then fail on a forbidden domain code point (CR, LF, space, '%', ...).
+  EXPECT_FALSE(ml::Url::parse("http://evil%0d%0a.example.com/"));
+  EXPECT_FALSE(ml::Url::parse("http://a%0aexample.com/"));
+  EXPECT_FALSE(ml::Url::parse("http://a%20b.com/"));
+  EXPECT_FALSE(ml::Url::parse("http://a%2fb.com/"));
+  EXPECT_FALSE(ml::Url::parse("http://a%zzb.com/"));
+  const auto ok = ml::Url::parse("http://p%61ypal.com/");
+  ASSERT_TRUE(ok);
+  EXPECT_EQ(ok->host, "paypal.com");
+  EXPECT_TRUE(ok->encoded_host);
+}

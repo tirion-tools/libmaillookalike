@@ -54,6 +54,15 @@ std::string replace_all(std::string s, std::string_view from, std::string_view t
   return s;
 }
 
+// WHATWG "forbidden domain code point": C0 controls, space, # % / : < > ? @ [ \ ] ^ |, U+007F. A percent-decoded
+// host that contains one is a host-parsing failure.
+bool has_forbidden_domain_code_point(std::string_view h) {
+  return std::any_of(h.begin(), h.end(), [](char ch) {
+    const auto c = static_cast<unsigned char>(ch);
+    return c <= 0x20 || c == 0x7F || std::string_view("#%/:<>?@[\\]^|").find(ch) != std::string_view::npos;
+  });
+}
+
 }  // namespace
 
 std::string percent_decode(std::string_view s) {
@@ -268,6 +277,7 @@ std::optional<Url> Url::parse(std::string_view raw) {
     if (host_part.find('%') != std::string::npos) {
       u.encoded_host = true;
       host_part = percent_decode(host_part);
+      if (has_forbidden_domain_code_point(host_part)) return std::nullopt;
     }
     host_part = replace_all(host_part, "\xE3\x80\x82", ".");  // U+3002
     host_part = replace_all(host_part, "\xEF\xBC\x8E", ".");  // U+FF0E
