@@ -68,6 +68,12 @@ publicsuffix/list@aa004f90b4cbe1c54ea96375622eca83d76059f0. `tests/data/chromium
 156.0.8078.88 (BSD-3-Clause, Copyright The Chromium Authors). `tests/data/brands.tsv` and `shared_mailbox.txt`
 are test fixtures, not a shipped brand list.
 
+## Contributing
+
+This repository is not accepting contributions at this time: issues and pull requests are not accepted. Report
+security vulnerabilities privately as described in [`SECURITY.md`](SECURITY.md).
+
 ## Licence
 
-MIT (see `LICENSE`), except the data files named above.
+MIT (see `LICENSE`), except the data files named above and the parts of `src/lookalike.cc` ported from Chromium
+(BSD-3-Clause). `THIRD-PARTY-NOTICES.md` lists them with their licence texts.
