@@ -73,10 +73,10 @@ ws://example.com/socket	1	ws	example.com	/socket		ws://example.com/socket		0
 http://ta\tb.com/	1	http	tab.com	/		http://tab.com/		0	
 http://new	1	http	new	/		http://new/		0	
 line.com/	0							0	
-http://example.com/a\\b\\c?x=\\y	1	http	example.com	/a/b/c	x=/y	http://example.com/a/b/c?x=/y		0	x\|/y
-http://example.com/?a=1&b=2;c=3&A+B=x%20y&%41=%zz&=e&k	1	http	example.com	/	a=1&b=2;c=3&A+B=x%20y&%41=%zz&=e&k	http://example.com/?a=1&b=2;c=3&A+B=x%20y&%41=%zz&=e&k		0	a\|1\|b\|2\|c\|3\|a b\|x y\|a\|%zz\|\|e\|k\|
+http://example.com/a\\b\\c?x=\\y	1	http	example.com	/a/b/c	x=%5Cy	http://example.com/a/b/c?x=%5Cy		0	x\|\\y
+http://example.com/?a=1&b=2;c=3&A+B=x%20y&%41=%zz&=e&k	1	http	example.com	/	a=1&b=2;c=3&A+B=x%20y&A=%zz&=e&k	http://example.com/?a=1&b=2;c=3&A+B=x%20y&A=%zz&=e&k		0	a\|1\|b\|2\|c\|3\|a b\|x y\|a\|%zz\|\|e\|k\|
 http://example.com/%E2%82%AC%FF	1	http	example.com	/%E2%82%AC%FF		http://example.com/%E2%82%AC%FF		0	
-http://example.com/?q=%E2%82%AC%FF%41	1	http	example.com	/	q=%E2%82%AC%FF%41	http://example.com/?q=%E2%82%AC%FF%41		0	q\|€%FFA
+http://example.com/?q=%E2%82%AC%FF%41	1	http	example.com	/	q=%E2%82%AC%FFA	http://example.com/?q=%E2%82%AC%FFA		0	q\|€%FFA
 https://ex.com/?u=https%3A%2F%2Fwww.example.org%2F	1	https	ex.com	/	u=https%3A%2F%2Fwww.example.org%2F	https://ex.com/?u=https%3A%2F%2Fwww.example.org%2F		0	u\|https://www.example.org/
 ://nothing	0							0	
 http	0							0	

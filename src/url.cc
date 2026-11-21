@@ -63,6 +63,71 @@ bool has_forbidden_domain_code_point(std::string_view h) {
   });
 }
 
+bool unreserved(unsigned char c) {
+  return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '-' || c == '.' ||
+         c == '_' || c == '~';
+}
+
+// One spelling of a path or query, whichever a browser or a sanitizer serialised: escapes of unreserved characters
+// decoded (WHATWG reads "%2e" as a dot segment; "%6C" is "l"), other escapes in upper-case hex, and every byte that one
+// serialiser escapes and another may not (controls, space, non-ASCII, " ' < > \ ^ ` { | }) escaped. A '%' that starts
+// no escape stays, as in WHATWG.
+std::string normalise_component(std::string_view s) {
+  static constexpr char kHex[] = "0123456789ABCDEF";
+  std::string out;
+  out.reserve(s.size());
+  auto escape = [&](unsigned char c) {
+    out += '%';
+    out += kHex[c >> 4];
+    out += kHex[c & 15];
+  };
+  for (size_t i = 0; i < s.size(); ++i) {
+    const auto c = static_cast<unsigned char>(s[i]);
+    if (c == '%' && i + 2 < s.size() && hex(s[i + 1]) >= 0 && hex(s[i + 2]) >= 0) {
+      const auto d = static_cast<unsigned char>(hex(s[i + 1]) * 16 + hex(s[i + 2]));
+      if (unreserved(d))
+        out += static_cast<char>(d);
+      else
+        escape(d);
+      i += 2;
+    } else if (c <= 0x20 || c >= 0x7F || std::string_view("\"'<>\\^`{|}").find(static_cast<char>(c)) != std::string_view::npos) {
+      escape(c);
+    } else {
+      out += static_cast<char>(c);
+    }
+  }
+  return out;
+}
+
+// WHATWG path parsing of a special URL's path ("/..."): "." segments dropped, ".." drops the segment before it (never
+// above the root), and either one last leaves a trailing slash. Empty segments stay.
+std::string remove_dot_segments(std::string_view path) {
+  std::vector<std::string_view> out;
+  size_t p = 1;
+  while (true) {
+    const size_t slash = path.find('/', p);
+    const std::string_view seg = path.substr(p, slash == std::string_view::npos ? std::string_view::npos : slash - p);
+    const bool last = slash == std::string_view::npos;
+    if (seg == "..") {
+      if (!out.empty()) out.pop_back();
+      if (last) out.emplace_back();
+    } else if (seg == ".") {
+      if (last) out.emplace_back();
+    } else {
+      out.push_back(seg);
+    }
+    if (last) break;
+    p = slash + 1;
+  }
+  std::string r;
+  r.reserve(path.size());
+  for (const std::string_view seg : out) {
+    r += '/';
+    r += seg;
+  }
+  return r.empty() ? std::string("/") : r;
+}
+
 }  // namespace
 
 std::string percent_decode(std::string_view s) {
@@ -297,12 +362,13 @@ std::optional<Url> Url::parse(std::string_view raw) {
     }
   }
   if (!port.empty() && port != (u.scheme == "https" ? "443" : "80")) u.non_default_port = true;
-  std::replace(tail.begin(), tail.end(), '\\', '/');
   if (const size_t hash = tail.find('#'); hash != std::string::npos) tail.resize(hash);
   const size_t q = tail.find('?');
   u.path = q == std::string::npos ? tail : tail.substr(0, q);
   if (u.path.empty()) u.path = "/";
-  u.query = q == std::string::npos ? std::string() : tail.substr(q + 1);
+  std::replace(u.path.begin(), u.path.end(), '\\', '/');  // in the path only, as in WHATWG
+  u.path = remove_dot_segments(normalise_component(u.path));
+  u.query = q == std::string::npos ? std::string() : normalise_component(std::string_view(tail).substr(q + 1));
   u.canonical = clip_utf8(u.scheme + "://" + u.host + (u.non_default_port ? ":" + port : std::string()) + u.path +
                               (u.query.empty() ? std::string() : "?" + u.query),
                           kMaxCanonical);

@@ -26,7 +26,11 @@ cite.
   redirect target), invisible or bidi characters in link text, shorteners, user-content hosts, OAuth consent and
   device-login endpoints. A client calls the same `assess()` with the facts it stored at sync and with the facts of
   a clicked link, so its arrival-time decision and its click-time dialog cannot disagree.
-- `url.h`: the URL parsing those checks need (canonical form, host, structural facts). Not a full WHATWG parser.
+- `url.h`: the URL parsing those checks need (canonical form, host, structural facts). Not a full WHATWG parser, but
+  the path follows WHATWG (dot segments resolved, `\` as `/`) and path and query are in one spelling (escapes of
+  unreserved characters decoded, every other escape in upper-case hex, unsafe bytes escaped), so a browser's
+  serialisation of a clicked URL and the href it came from have the same canonical form. The reference engine's
+  vectors (`tests/vectors/urls.tsv`) differ from the engine there in three rows (since 0.1.3).
 - `psl.h`: registrable domains, listed suffixes and "known TLD" through libpsl.
 
 Lists (redirectors, shorteners, endpoints, hosts) are data from the caller: `LinkListsData`, or the TSV of

@@ -1,6 +1,8 @@
 // URL parsing for the link checks: WHATWG-style host handling for special schemes (backslash as slash, userinfo
-// stripped, percent-decoded host, UTS #46 IDNA, IPv4 number forms). Not a full WHATWG implementation: it yields the
-// canonical form, the host and the structural facts the checks need. Inputs are untrusted UTF-8.
+// stripped, percent-decoded host, UTS #46 IDNA, IPv4 number forms) and path handling (dot segments resolved, escapes of
+// unreserved characters decoded). Not a full WHATWG implementation: it yields the canonical form, the host and the
+// structural facts the checks need; the path and query are in one spelling, so a browser's serialisation of a URL and
+// the href it came from have the same canonical form. Inputs are untrusted UTF-8.
 #pragma once
 
 #include <optional>
@@ -19,8 +21,10 @@ struct Url {
   std::string host;           // ASCII (A-labels), lower case; dotted quad for IPv4; "[...]" for IPv6
   std::string unicode_host;   // UTS #46 ToUnicode of host, NFKC, lower case (analysis only)
   std::string userinfo_text;  // the userinfo before '@' (empty when none)
-  std::string path = "/";     // '\' turned into '/', fragment dropped
-  std::string query;          // without '?'
+  std::string path = "/";     // '\' turned into '/', dot segments resolved, fragment dropped; normalised escapes:
+                              // unreserved characters decoded, other escapes upper-case hex, and controls, space,
+                              // non-ASCII and " ' < > \ ^ ` { | } escaped
+  std::string query;          // without '?'; escapes normalised as in path
   std::string canonical;      // scheme://host[:port]path[?query]; "mailto:addr"; "scheme:rest" for others
   std::string mailto_domain;  // ACE domain of the first mailto address (empty when none)
   bool userinfo = false;

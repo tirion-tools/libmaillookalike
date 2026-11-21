@@ -66,3 +66,33 @@ TEST(Url, PercentEncodedHostWithForbiddenCodePointFails) {
   EXPECT_EQ(ok->host, "paypal.com");
   EXPECT_TRUE(ok->encoded_host);
 }
+
+// The path and query in one spelling, so the URL a browser reports for a click (dot segments resolved, its own escaping)
+// and the href a sanitizer or a message wrote compare equal (Graphein F1, 2026-11-20).
+TEST(Url, PathAndQueryAreNormalisedTheWhatwgWay) {
+  struct Case {
+    const char* raw;
+    const char* canonical;
+  };
+  const Case cases[] = {
+      {"https://evil.example/x/../login", "https://evil.example/login"},
+      {"https://evil.example/x/%2e%2E/login", "https://evil.example/login"},
+      {"https://evil.example/x/.%2e/./login", "https://evil.example/login"},
+      {"https://evil.example/../../login", "https://evil.example/login"},
+      {"https://evil.example/a/b/..", "https://evil.example/a/"},
+      {"https://evil.example/a/.", "https://evil.example/a/"},
+      {"https://evil.example/a//b", "https://evil.example/a//b"},
+      {"https://evil.example/%6Cogin", "https://evil.example/login"},
+      {"https://evil.example/x%5C..%5Clogin", "https://evil.example/x%5C..%5Clogin"},
+      {"https://evil.example\\x\\..\\login", "https://evil.example/login"},
+      {"https://evil.example/a b/%7e?q=a b&r='x'%2f%7E", "https://evil.example/a%20b/~?q=a%20b&r=%27x%27%2F~"},
+      {"https://evil.example/\xD0\xB0?\xD0\xB1", "https://evil.example/%D0%B0?%D0%B1"},
+      {"https://evil.example/100%/{a}|^`", "https://evil.example/100%/%7Ba%7D%7C%5E%60"},
+  };
+  for (const Case& c : cases) {
+    const auto u = ml::Url::parse(c.raw);
+    ASSERT_TRUE(u) << c.raw;
+    EXPECT_EQ(u->canonical, c.canonical) << c.raw;
+  }
+  EXPECT_EQ(ml::Url::parse("https://evil.example/x/../oauth2/%61uthorize")->path, "/oauth2/authorize");
+}
