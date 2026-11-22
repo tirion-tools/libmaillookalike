@@ -15,7 +15,6 @@ using detail::next_cp;
 
 namespace {
 
-constexpr size_t kMaxDomain = 64;  // longer domains are dropped whole (a cut domain would name another one)
 constexpr int kMaxUnwrap = 3;
 
 struct Rule {
@@ -30,8 +29,6 @@ bool host_is(std::string_view host, std::string_view suffix) {
   return host == suffix || (host.size() > suffix.size() && host.substr(host.size() - suffix.size()) == suffix &&
                             host[host.size() - suffix.size() - 1] == '.');
 }
-
-std::string whole(std::string s) { return s.size() > kMaxDomain ? std::string() : s; }
 
 bool match(const std::regex& re, const std::string& s) {
   try {
@@ -315,7 +312,7 @@ void compare_text(const Ctx& c, LinkAssessment& r, const std::vector<std::string
     if (h.empty()) continue;
     const std::string treg = c.psl.registrable(h);
     if (treg.empty()) continue;
-    r.text_domain = whole(treg);
+    r.text_domain = treg;
     if (reg.empty() || treg != reg) {
       r.text_mismatch = true;
       if (!inner_reg.empty() && inner_reg == treg) flags |= kLinkTextMatchesInner;
@@ -336,7 +333,7 @@ LinkAssessment assess(const LinkFacts& f, const Psl& psl, const LinkLists& lists
   if (f.source & kSourceHtml) flags |= kLinkFromHtml;
   if (f.source & kSourcePlain) flags |= kLinkFromPlain;
   if (u.scheme == "mailto") {
-    r.reg = whole(psl.registrable(u.mailto_domain));
+    r.reg = psl.registrable(u.mailto_domain);
     r.flags = flags;
     return r;
   }
@@ -364,10 +361,10 @@ LinkAssessment assess(const LinkFacts& f, const Psl& psl, const LinkLists& lists
       if (!r.embedded_domain.empty()) flags |= kLinkDomainInSubdomain;
     }
   }
-  r.reg = whole(reg);
+  r.reg = reg;
   std::string inner_reg;
   unwrap(c, u, r, flags, inner_reg, 0);
-  r.inner_reg = whole(inner_reg);
+  r.inner_reg = inner_reg;
   for (const std::string& e : c.lists.esp)
     if (host_is(u.host, e)) {
       r.esp = e;

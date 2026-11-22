@@ -116,3 +116,39 @@ TEST(Links, StructuralFlags) {
   EXPECT_TRUE(fx.run("https://example.com/?user_code=ABCD", {}).device);
   EXPECT_FALSE(fx.run("not a url", {}).url);
 }
+
+// Up to 0.1.4 a registrable domain over 64 bytes came back as "" (reg, inner_reg, text_domain), so a client's
+// domain-level checks skipped long phishing domains such as `<63 letters>.com` and `*.replit.dev` customers.
+TEST(Links, LongRegistrableDomainsAreWhole) {
+  Fixture fx;
+  const std::string label(63, 'a');
+  const std::string longcom = label + ".com";  // 67 bytes
+  const std::string replit = "c0ffee00-1234-4abc-8def-0123456789ab-00-2k4yq1x9z7m3p.riker.replit.dev";
+  ASSERT_GT(replit.size(), 64u);
+
+  auto a = fx.run("https://login." + longcom + "/x", {});
+  EXPECT_EQ(a.reg, longcom);
+  a = fx.run("https://www." + replit + "/pay", {});
+  EXPECT_EQ(a.reg, replit);  // `*.replit.dev`: one customer per registrable domain
+  EXPECT_EQ(fx.run("mailto:billing@" + longcom, {}).reg, longcom);
+
+  // The text names the long domain the link goes to: no mismatch; another long domain: a mismatch that names it.
+  a = fx.run("https://" + longcom + "/", {longcom});
+  EXPECT_FALSE(a.text_mismatch);
+  EXPECT_EQ(a.text_domain, longcom);
+  a = fx.run("https://evil.example.net/", {"https://" + replit + "/"});
+  EXPECT_TRUE(a.text_mismatch);
+  EXPECT_EQ(a.text_domain, replit);
+
+  a = fx.run("https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2F" + longcom + "%2F&data=x", {});
+  EXPECT_TRUE(a.redirector);
+  EXPECT_EQ(a.inner_reg, longcom);
+
+  // The longest host DNS allows (253 bytes) still parses, and its registrable domain is whole.
+  const std::string host = label + "." + label + "." + label + "." + std::string(57, 'b') + ".com";
+  ASSERT_EQ(host.size(), 253u);
+  a = fx.run("https://" + host + "/", {});
+  ASSERT_TRUE(a.url);
+  EXPECT_EQ(a.reg, std::string(57, 'b') + ".com");
+  EXPECT_FALSE(fx.run("https://x" + host + "/", {}).url);  // 254 bytes
+}

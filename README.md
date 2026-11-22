@@ -39,8 +39,9 @@ are worded) stays with the client.
 
 ## Security model
 
-All string inputs are untrusted: lengths are bounded (URLs 8192 UTF-16 units, canonical form 2048 bytes, domains 64
-bytes, at most 64 query parameters and three redirect levels), invalid UTF-8 is replaced, and list regexes run
+All string inputs are untrusted: lengths are bounded (URLs 8192 UTF-16 units, canonical form 2048 bytes, hosts and
+domains 253 bytes (the DNS limit; a registrable domain is reported whole however long it is, since 0.1.5), at most
+64 query parameters and three redirect levels), invalid UTF-8 is replaced, and list regexes run
 with `std::regex` on bounded inputs (a regex error counts as no match). The list data and the PSL are trusted (they
 ship with the client). Objects are immutable after construction and safe to share between threads.
 

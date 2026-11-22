@@ -116,6 +116,7 @@ struct OAuthLink {
 
 struct LinkAssessment {
   std::optional<Url> url;      // nullopt when the href does not parse (no other field is set)
+  // Domains are whole, up to the 253-byte host limit (a long registrable domain is reported, never cut or dropped).
   std::string reg;             // registrable domain of the host ("" for IP literals, suffix-only hosts)
   std::string inner_reg;       // registrable domain (or IP) of the unwrapped redirect target
   std::string text_domain;     // registrable domain a URL-shaped text names
