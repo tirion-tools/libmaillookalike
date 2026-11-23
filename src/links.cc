@@ -197,6 +197,41 @@ bool has_invisible(std::string_view text) {
 std::string url_shaped_host(std::string_view text, const Psl& psl) {
   // ^\s*(?:https?://|www\.)?(?:[^\s@/]+@)?([A-Za-z0-9\u00C0-\uFFFF.-]+\.[A-Za-z\u00C0-\uFFFF]{2,63})(?::\d+)?
   // (?:[/?#]\S*)?\s*$ over the cleaned text; supplementary characters count as letters (UTF-16 surrogates do).
+#ifdef _WIN32
+  // wchar_t is a UTF-16 code unit here: the text goes in as UTF-16, and the U+00C0..U+FFFF range holds the
+  // surrogates, so a supplementary character counts as a letter (two units toward {2,63}, as in UTF-16 regexes).
+  static const std::wregex re(
+      L"^\\s*(?:(?:https?://)|(?:www\\.))?(?:[^\\s@/]+@)?"
+      L"([A-Za-z0-9\u00C0-\uFFFF.-]+\\.[A-Za-z\u00C0-\uFFFF]{2,63})(?::[0-9]+)?(?:[/?#]\\S*)?\\s*$",
+      std::regex::ECMAScript);
+  const std::string clean = clean_text(text, 256);
+  std::wstring w;
+  for (const char32_t c : to_u32(clean)) {
+    if (c > 0xFFFF) {
+      w.push_back(static_cast<wchar_t>(0xD800 + ((c - 0x10000) >> 10)));
+      w.push_back(static_cast<wchar_t>(0xDC00 + ((c - 0x10000) & 0x3FF)));
+    } else {
+      w.push_back(static_cast<wchar_t>(c));
+    }
+  }
+  std::wsmatch m;
+  try {
+    if (!std::regex_match(w, m, re)) return {};
+  } catch (const std::regex_error&) {
+    return {};
+  }
+  const std::wstring g = m[1].str();
+  std::u32string g32;
+  for (size_t i = 0; i < g.size(); ++i) {
+    const char32_t hi = static_cast<char16_t>(g[i]);
+    if (hi >= 0xD800 && hi < 0xDC00 && i + 1 < g.size() && static_cast<char16_t>(g[i + 1]) >= 0xDC00 &&
+        static_cast<char16_t>(g[i + 1]) < 0xE000) {
+      g32.push_back(0x10000 + ((hi - 0xD800) << 10) + (static_cast<char16_t>(g[++i]) - 0xDC00));
+    } else {
+      g32.push_back(hi);
+    }
+  }
+#else
   static const std::wregex re(
       L"^\\s*(?:(?:https?://)|(?:www\\.))?(?:[^\\s@/]+@)?"
       L"([A-Za-z0-9\u00C0-\U0010FFFF.-]+\\.[A-Za-z\u00C0-\U0010FFFF]{2,63})(?::[0-9]+)?(?:[/?#]\\S*)?\\s*$",
@@ -212,6 +247,7 @@ std::string url_shaped_host(std::string_view text, const Psl& psl) {
   }
   const std::wstring g = m[1].str();
   const std::u32string g32(g.begin(), g.end());
+#endif
   auto h = host_forms(from_u32(g32));
   if (!h || !psl.has_known_tld(h->ascii)) return {};
   return h->ascii;

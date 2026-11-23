@@ -6,7 +6,7 @@
 # they exist; otherwise ICU and libpsl come from pkg-config. Built on its own (tools/gate.sh) it also builds the
 # GoogleTest suites with strict warnings as errors, and with -DMAILLOOKALIKE_FUZZ=ON (clang) the libFuzzer targets.
 cmake_minimum_required(VERSION 3.25)
-project(maillookalike VERSION 0.1.5 LANGUAGES CXX)
+project(maillookalike VERSION 0.1.6 LANGUAGES CXX)
 
 find_package(PkgConfig REQUIRED)
 if(NOT TARGET PkgConfig::ICU)
@@ -23,7 +23,11 @@ target_compile_features(maillookalike PUBLIC cxx_std_20)
 target_link_libraries(maillookalike PRIVATE PkgConfig::ICU PkgConfig::PSL)
 
 if(PROJECT_IS_TOP_LEVEL)
-  set(_strict -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wno-sign-conversion -Werror)
+  if(MSVC)
+    set(_strict /W4 /WX /wd4996 /permissive- /utf-8)  # C4996: the CRT's *_s suggestions
+  else()
+    set(_strict -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wno-sign-conversion -Werror)
+  endif()
   target_compile_options(maillookalike PRIVATE ${_strict})
   option(MAILLOOKALIKE_FUZZ "Build the libFuzzer targets instead of the tests (clang)" OFF)
   if(MAILLOOKALIKE_FUZZ)

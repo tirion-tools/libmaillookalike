@@ -13,7 +13,16 @@ std::shared_ptr<const Psl> Psl::load(std::string_view psl_text, std::vector<std:
   std::shared_ptr<Psl> p(new Psl());
   p->fixture_tlds_ = std::move(fixture_tlds);
   if (!buf.empty()) {
+#ifdef _WIN32
+    // No fmemopen in the Windows CRT: libpsl reads the list from an anonymous temporary file instead.
+    FILE* f = std::tmpfile();
+    if (f != nullptr && (std::fwrite(buf.data(), 1, buf.size(), f) != buf.size() || std::fseek(f, 0, SEEK_SET) != 0)) {
+      std::fclose(f);
+      f = nullptr;
+    }
+#else
     FILE* f = fmemopen(buf.data(), buf.size(), "r");
+#endif
     if (f != nullptr) {
       p->ctx_ = psl_load_fp(f);
       std::fclose(f);

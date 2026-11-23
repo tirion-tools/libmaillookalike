@@ -1,8 +1,9 @@
 # libmaillookalike
 
-Lookalike and link-deception checks for mail clients (C++20, Linux). No network and no I/O after construction:
-inputs are bounded strings taken from a message, outputs are enumerations plus the domain or name a warning would
-cite.
+Lookalike and link-deception checks for mail clients (C++20, Linux and Windows with MSVC). No network and no I/O after
+construction (on Windows, where the CRT has no `fmemopen`, construction hands the public suffix list to libpsl through
+an anonymous temporary file): inputs are bounded strings taken from a message, outputs are enumerations plus the domain
+or name a warning would cite.
 
 ## Builds on
 
