@@ -5,6 +5,7 @@
 // the href it came from have the same canonical form. Inputs are untrusted UTF-8.
 #pragma once
 
+#include <cstdint>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -34,14 +35,25 @@ struct Url {
   bool non_default_port = false;
   bool bad_slashes = false;      // backslashes or not exactly two slashes after a special scheme
 
-  // nullopt for empty, oversized, scheme-less input or a host IDNA refuses. "www." gets "http://".
-  static std::optional<Url> parse(std::string_view utf8);
+  // Why parse() refused an input.
+  enum class Refusal : uint8_t {
+    kNone,
+    kTooLong,  // over kMaxInput code units after trimming: refused whole, never cut (a part past a cut is unchecked)
+    kBadHost,  // a host UTS #46 refuses (host_forms)
+    kOther,    // empty, no scheme
+  };
+
+  // nullopt for empty, oversized, scheme-less input or a host IDNA refuses; `why` (optional) says which. "www." gets
+  // "http://".
+  static std::optional<Url> parse(std::string_view utf8, Refusal* why = nullptr);
 
   // Decoded query parameters ('+' as space, keys lower-cased), split on '&' and ';'; at most 64.
   std::vector<std::pair<std::string, std::string>> query_params() const;
 };
 
-// Host to its ASCII and Unicode forms; nullopt when UTS #46 refuses it or it is empty or over 253 bytes.
+// Host to its ASCII and Unicode forms; nullopt when UTS #46 refuses it or it is empty or over 253 bytes. UTS #46 runs
+// with the library's one option set, the lookalike engine's too: non-transitional both ways, CheckBidi and
+// CheckJoiners (WHATWG URL's), so a host with a ZWJ/ZWNJ out of its allowed context is refused everywhere.
 struct HostForms {
   std::string ascii;
   std::string unicode;

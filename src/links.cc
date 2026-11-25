@@ -361,7 +361,7 @@ void compare_text(const Ctx& c, LinkAssessment& r, const std::vector<std::string
 
 LinkAssessment assess(const LinkFacts& f, const Psl& psl, const LinkLists& lists) {
   LinkAssessment r;
-  r.url = Url::parse(f.href);
+  r.url = Url::parse(f.href, &r.refused);
   if (!r.url) return r;
   const Url& u = *r.url;
   const Ctx c{psl, lists.impl()};

@@ -46,6 +46,13 @@ domains 253 bytes (the DNS limit; a registrable domain is reported whole however
 with `std::regex` on bounded inputs (a regex error counts as no match). The list data and the PSL are trusted (they
 ship with the client). Objects are immutable after construction and safe to share between threads.
 
+A URL over the length bound is refused, never cut: `Url::parse` says why it refused an input (`Url::Refusal`: too
+long, a host IDNA refuses, other), and so does `LinkAssessment::refused`, so a client can warn about a link it could
+not check instead of checking a prefix of it. Every host goes through one UTS #46 configuration, in the URL parser and
+in the lookalike engine alike: non-transitional, CheckBidi and CheckJoiners (WHATWG URL's), so a host with a ZWJ or
+ZWNJ out of its allowed context is refused by both (since 0.1.7; before, the URL parser accepted it, the engine
+refused it, and the lookalike checks never ran).
+
 ## Tests and gate
 
 `tools/container.sh tools/gate.sh` runs, in a pinned Ubuntu 26.04 image:

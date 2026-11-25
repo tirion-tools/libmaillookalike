@@ -6,7 +6,7 @@
 # they exist; otherwise ICU and libpsl come from pkg-config. Built on its own (tools/gate.sh) it also builds the
 # GoogleTest suites with strict warnings as errors, and with -DMAILLOOKALIKE_FUZZ=ON (clang) the libFuzzer targets.
 cmake_minimum_required(VERSION 3.25)
-project(maillookalike VERSION 0.1.6 LANGUAGES CXX)
+project(maillookalike VERSION 0.1.7 LANGUAGES CXX)
 
 find_package(PkgConfig REQUIRED)
 if(NOT TARGET PkgConfig::ICU)

@@ -8,6 +8,7 @@
 #include <set>
 
 #include "maillookalike/lookalike.h"
+#include "maillookalike/url.h"
 #include "test_data.h"
 
 namespace ml = maillookalike;
@@ -86,4 +87,19 @@ TEST(Lookalike, RegistrableDomainIsThePsl) {
   ASSERT_TRUE(eng);
   EXPECT_EQ(eng->registrable_domain("Paypal.COM.evil.top"), "evil.top");
   EXPECT_EQ(eng->registrable_domain("a.b.github.io"), "b.github.io");
+}
+
+// The URL layer and the engine run UTS #46 with one option set: a host is accepted by both or refused by both, and a
+// host the engine refuses is reported (InvalidIdna), never passed as clean.
+TEST(Lookalike, UrlLayerAndEngineAgreeOnHosts) {
+  auto eng = engine();
+  ASSERT_TRUE(eng);
+  for (const char* host : {"pay\u200Dpal.com", "pay\u200Cpal.com", "\u200Dpaypal.com", "\u0915\u094D\u200D\u0937.example",
+                           "b\u00FCcher.example", "ab--cd.example", "-paypal.com", "paypal.com"}) {
+    const bool url_ok = ml::host_forms(host).has_value();
+    const ml::HostReport r = eng->check_host(host);
+    EXPECT_EQ(url_ok, r.idn != ml::IdnReason::InvalidIdna) << host;
+  }
+  EXPECT_EQ(eng->check_host("pay\u200Dpal.com").idn, ml::IdnReason::InvalidIdna);
+  EXPECT_FALSE(ml::host_forms("pay\u200Dpal.com"));
 }

@@ -9,9 +9,27 @@
 #include <cstdint>
 #include <mutex>
 
+#include "idna.h"
 #include "text.h"
 
 namespace maillookalike {
+
+namespace detail {
+
+const UIDNA* uts46() {
+  static UIDNA* h = [] {
+    UErrorCode st = U_ZERO_ERROR;
+    UIDNA* p = uidna_openUTS46(UIDNA_CHECK_BIDI | UIDNA_CHECK_CONTEXTJ | UIDNA_NONTRANSITIONAL_TO_ASCII |
+                                   UIDNA_NONTRANSITIONAL_TO_UNICODE,
+                               &st);
+    return U_SUCCESS(st) ? p : nullptr;
+  }();
+  return h;
+}
+
+bool uts46_ok(const UIDNAInfo& info) { return (info.errors & ~uint32_t{UIDNA_ERROR_HYPHEN_3_4}) == 0; }
+
+}  // namespace detail
 
 using detail::append_utf8;
 using detail::ascii_lower;
@@ -32,15 +50,6 @@ size_t utf16_units(std::string_view s) {
   size_t n = 0;
   for (size_t i = 0; i < s.size();) n += next_cp(s, i) > 0xFFFF ? 2 : 1;
   return n;
-}
-
-const UIDNA* idna() {
-  static UIDNA* h = [] {
-    UErrorCode st = U_ZERO_ERROR;
-    UIDNA* p = uidna_openUTS46(UIDNA_CHECK_BIDI | UIDNA_NONTRANSITIONAL_TO_ASCII | UIDNA_NONTRANSITIONAL_TO_UNICODE, &st);
-    return U_SUCCESS(st) ? p : nullptr;
-  }();
-  return h;
 }
 
 bool is_space(char32_t c) {
@@ -184,21 +193,20 @@ std::optional<HostForms> host_forms(std::string_view raw) {
   }
   while (!h.empty() && h.back() == '.') h.remove_suffix(1);
   const size_t units = utf16_units(h);
-  if (units == 0 || units > 253 || idna() == nullptr) return std::nullopt;
+  if (units == 0 || units > 253 || detail::uts46() == nullptr) return std::nullopt;
   char buf[1024];
   UErrorCode st = U_ZERO_ERROR;
   UIDNAInfo info = UIDNA_INFO_INITIALIZER;
-  int32_t n = uidna_nameToASCII_UTF8(idna(), h.data(), static_cast<int32_t>(h.size()), buf, sizeof buf, &info, &st);
-  // "--" in the third and fourth positions is accepted, as by the reference (.NET IdnMapping, which ignores
-  // UIDNA_ERROR_HYPHEN_3_4); leading and trailing hyphens are not.
-  if (U_FAILURE(st) || (info.errors & ~uint32_t{UIDNA_ERROR_HYPHEN_3_4}) != 0 || n <= 0 || n >= static_cast<int32_t>(sizeof buf))
-    return std::nullopt;
+  int32_t n =
+      uidna_nameToASCII_UTF8(detail::uts46(), h.data(), static_cast<int32_t>(h.size()), buf, sizeof buf, &info, &st);
+  if (U_FAILURE(st) || !detail::uts46_ok(info) || n <= 0 || n >= static_cast<int32_t>(sizeof buf)) return std::nullopt;
   HostForms r;
   r.ascii = ascii_lower(std::string_view(buf, static_cast<size_t>(n)));
   st = U_ZERO_ERROR;
   info = UIDNA_INFO_INITIALIZER;
   char ubuf[2048];
-  n = uidna_nameToUnicodeUTF8(idna(), r.ascii.data(), static_cast<int32_t>(r.ascii.size()), ubuf, sizeof ubuf, &info, &st);
+  n = uidna_nameToUnicodeUTF8(detail::uts46(), r.ascii.data(), static_cast<int32_t>(r.ascii.size()), ubuf, sizeof ubuf,
+                              &info, &st);
   std::string uni = U_FAILURE(st) || info.errors != 0 || n < 0 || n >= static_cast<int32_t>(sizeof ubuf)
                         ? r.ascii
                         : std::string(ubuf, static_cast<size_t>(n));
@@ -262,7 +270,10 @@ std::optional<std::string> parse_ipv4(std::string_view host) {
          std::to_string((ip >> 8) & 255) + "." + std::to_string(ip & 255);
 }
 
-std::optional<Url> Url::parse(std::string_view raw) {
+std::optional<Url> Url::parse(std::string_view raw, Refusal* why) {
+  Refusal ignored = Refusal::kNone;
+  Refusal& refusal = why ? *why : ignored;
+  refusal = Refusal::kTooLong;
   if (raw.size() > kMaxInput * 2 * 3) return std::nullopt;
   // Trim space, NUL..BEL, BS and FF at both ends, then drop tab, LF and CR everywhere.
   auto trimmed = [](char c) { return c == ' ' || (c >= 0 && c <= 0x08) || c == '\f'; };
@@ -273,7 +284,9 @@ std::optional<Url> Url::parse(std::string_view raw) {
   s.reserve(e - b);
   for (size_t i = b; i < e; ++i)
     if (raw[i] != '\t' && raw[i] != '\n' && raw[i] != '\r') s += raw[i];
-  if (s.empty() || utf16_units(s) > kMaxInput) return std::nullopt;
+  if (utf16_units(s) > kMaxInput) return std::nullopt;
+  refusal = Refusal::kOther;
+  if (s.empty()) return std::nullopt;
   if (s.size() >= 4 && ascii_lower(s.substr(0, 4)) == "www.") s = "http://" + s;
   // Scheme: a letter, then up to 31 of [A-Za-z0-9+.-], then ':'.
   size_t k = 0;
@@ -284,6 +297,7 @@ std::optional<Url> Url::parse(std::string_view raw) {
          (alpha(s[k]) || (s[k] >= '0' && s[k] <= '9') || s[k] == '+' || s[k] == '.' || s[k] == '-'))
     ++k;
   if (k >= s.size() || s[k] != ':') return std::nullopt;
+  refusal = Refusal::kNone;  // from here only a host is refused
   Url u;
   u.scheme = ascii_lower(s.substr(0, k));
   std::string rest = s.substr(k + 1);
@@ -342,7 +356,10 @@ std::optional<Url> Url::parse(std::string_view raw) {
     if (host_part.find('%') != std::string::npos) {
       u.encoded_host = true;
       host_part = percent_decode(host_part);
-      if (has_forbidden_domain_code_point(host_part)) return std::nullopt;
+      if (has_forbidden_domain_code_point(host_part)) {
+        refusal = Refusal::kBadHost;
+        return std::nullopt;
+      }
     }
     host_part = replace_all(host_part, "\xE3\x80\x82", ".");  // U+3002
     host_part = replace_all(host_part, "\xEF\xBC\x8E", ".");  // U+FF0E
@@ -355,7 +372,10 @@ std::optional<Url> Url::parse(std::string_view raw) {
       u.unicode_host = u.host;
     } else {
       auto h = host_forms(host_part);
-      if (!h) return std::nullopt;
+      if (!h) {
+        refusal = Refusal::kBadHost;
+        return std::nullopt;
+      }
       u.host = h->ascii;
       u.unicode_host = h->unicode;
       u.idn = u.idn || h->idn;

@@ -26,6 +26,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "idna.h"
+
 namespace maillookalike {
 namespace {
 
@@ -326,7 +328,6 @@ class EngineImpl final : public Engine {
   EngineImpl(const EngineImpl&) = delete;  // owns ICU handles
   EngineImpl& operator=(const EngineImpl&) = delete;
   ~EngineImpl() override {
-    if (idna_) uidna_close(idna_);
     if (sc_) uspoof_close(sc_);
     if (sc_name_) uspoof_close(sc_name_);
   }
@@ -411,7 +412,6 @@ class EngineImpl final : public Engine {
 
   Options opt_;
   std::shared_ptr<const Psl> psl_;
-  UIDNA* idna_ = nullptr;
   USpoofChecker* sc_ = nullptr;       // Chromium-configured checker (IDN display)
   USpoofChecker* sc_name_ = nullptr;  // restriction-level checker for display names
   const icu::Normalizer2* nfkc_cf_ = nullptr;
@@ -460,15 +460,12 @@ class EngineImpl final : public Engine {
 };
 
 bool EngineImpl::init(std::shared_ptr<const Psl> psl, std::string* error) {
-  UErrorCode st = U_ZERO_ERROR;
   psl_ = std::move(psl);
-  idna_ = uidna_openUTS46(UIDNA_CHECK_BIDI | UIDNA_CHECK_CONTEXTJ | UIDNA_NONTRANSITIONAL_TO_ASCII |
-                              UIDNA_NONTRANSITIONAL_TO_UNICODE,
-                          &st);
-  if (U_FAILURE(st) || !psl_) {
+  if (detail::uts46() == nullptr || !psl_) {
     *error = psl_ ? "ICU UTS #46 is not available" : "no public suffix list";
     return false;
   }
+  UErrorCode st = U_ZERO_ERROR;
   nfkc_cf_ = icu::Normalizer2::getNFKCCasefoldInstance(st);
   nfkc_ = icu::Normalizer2::getNFKCInstance(st);
 
@@ -785,9 +782,9 @@ bool EngineImpl::to_ace(std::string_view host, std::string* out) const {
   char buf[512];
   UIDNAInfo info = UIDNA_INFO_INITIALIZER;
   UErrorCode st = U_ZERO_ERROR;
-  int32_t n = uidna_nameToASCII_UTF8(idna_, host.data(), static_cast<int32_t>(host.size()), buf, sizeof buf,
+  int32_t n = uidna_nameToASCII_UTF8(detail::uts46(), host.data(), static_cast<int32_t>(host.size()), buf, sizeof buf,
                                       &info, &st);
-  if (U_FAILURE(st) || info.errors != 0 || n <= 0 || static_cast<size_t>(n) > kMaxHostBytes) return false;
+  if (U_FAILURE(st) || !detail::uts46_ok(info) || n <= 0 || static_cast<size_t>(n) > kMaxHostBytes) return false;
   out->assign(buf, static_cast<size_t>(n));
   return true;
 }
@@ -797,7 +794,8 @@ bool EngineImpl::ace_to_unicode_label(const std::string& ace, UnicodeString* out
   UChar buf[256];
   UIDNAInfo info = UIDNA_INFO_INITIALIZER;
   UErrorCode st = U_ZERO_ERROR;
-  int32_t n = uidna_labelToUnicode(idna_, in.getBuffer(), in.length(), buf, 256, &info, &st);
+  int32_t n = uidna_labelToUnicode(detail::uts46(), in.getBuffer(), in.length(), buf, 256, &info, &st);
+  // Display (Chromium IDNToUnicode): a label with any error, "--" in positions 3-4 included, stays in its A-label form.
   if (U_FAILURE(st) || info.errors != 0) return false;
   *out = UnicodeString(buf, n);
   return true;

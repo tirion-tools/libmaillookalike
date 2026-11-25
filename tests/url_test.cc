@@ -67,6 +67,37 @@ TEST(Url, PercentEncodedHostWithForbiddenCodePointFails) {
   EXPECT_TRUE(ok->encoded_host);
 }
 
+// A host with a ZWJ/ZWNJ outside the context UTS #46 CheckJoiners allows (after a virama) is refused, as by the
+// lookalike engine and browsers (WHATWG CheckJoiners); a joiner after a virama is fine. Before 0.1.7 the URL layer ran
+// without CheckJoiners and accepted "pay\u200Dpal.com", which the engine then refused, so its checks never ran.
+TEST(Url, JoinerOutOfContextIsABadHost) {
+  for (const char* href : {"https://pay\u200Dpal.com/login", "https://pay\u200Cpal.com/", "https://www.\u200Dpaypal.com/"}) {
+    ml::Url::Refusal why = ml::Url::Refusal::kNone;
+    EXPECT_FALSE(ml::Url::parse(href, &why)) << href;
+    EXPECT_EQ(why, ml::Url::Refusal::kBadHost) << href;
+  }
+  ml::Url::Refusal why = ml::Url::Refusal::kOther;
+  const auto ok = ml::Url::parse("https://\u0915\u094D\u200D\u0937.example/", &why);
+  ASSERT_TRUE(ok);
+  EXPECT_EQ(why, ml::Url::Refusal::kNone);
+  EXPECT_TRUE(ok->idn);
+}
+
+// An input over kMaxInput code units is refused whole, with the reason, never cut to its first kMaxInput units (a cut
+// would leave the rest unchecked); kMaxInput units parse.
+TEST(Url, OverlongInputIsRefusedAsTooLong) {
+  const std::string head = "https://example.com/?q=";
+  ml::Url::Refusal why = ml::Url::Refusal::kOther;
+  EXPECT_TRUE(ml::Url::parse(head + std::string(ml::Url::kMaxInput - head.size(), 'a'), &why));
+  EXPECT_EQ(why, ml::Url::Refusal::kNone);
+  EXPECT_FALSE(ml::Url::parse(head + std::string(ml::Url::kMaxInput - head.size() + 1, 'a'), &why));
+  EXPECT_EQ(why, ml::Url::Refusal::kTooLong);
+  EXPECT_FALSE(ml::Url::parse(std::string(ml::Url::kMaxInput * 7, 'a'), &why));
+  EXPECT_EQ(why, ml::Url::Refusal::kTooLong);
+  EXPECT_FALSE(ml::Url::parse("no scheme here", &why));
+  EXPECT_EQ(why, ml::Url::Refusal::kOther);
+}
+
 // The path and query in one spelling, so the URL a browser reports for a click (dot segments resolved, its own escaping)
 // and the href a sanitizer or a message wrote compare equal (Graphein F1, 2026-11-20).
 TEST(Url, PathAndQueryAreNormalisedTheWhatwgWay) {
